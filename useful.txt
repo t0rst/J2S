@@ -1,0 +1,45 @@
+# get java
+
+# get homebrew
+
+# get ANTLR
+brew update; brew install antlr
+
+# regenerate recogniser java source files for latest antlr
+cd directory-containing-this
+antlr4 -o src -Dlanguage=Java -listener -visitor Java8.g4
+
+# build the source without an IDE
+cd directory-containing-this
+mkdir out/production/J2S
+javac -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:." -d out/production/J2S src/*.java
+
+# use the binaries to convert a java file
+src_file=path-to-your-source-file
+dst_file="${src_file%\.*}.swift"
+cd directory-containing-this
+J2S="$(pwd)out/production/J2S"
+java -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:${J2S}:." J2S "${src_file}" > "${dst_file}"
+
+
+
+# Misc
+
+# Regex to create listener stubs from grammar
+:Find:
+(^(\s*)([a-z])(\w+)\n(.+\n)+?\s*;$)
+:Replace with:
+$2/*
+$1
+$2@Override public void enter\u$3$4(Java8Parser.\u$3$4Context ctx) {}
+$2@Override public void exit\u$3$4(Java8Parser.\u$3$4Context ctx) {}
+$2*/
+
+# Regex to create visitor stubs from grammar (substitute your visitor return type for T)
+:Find:
+(^(\s*)([a-z])(\w+)\n(.+\n)+?\s*;$)
+:Replace with:
+$2/*
+$1
+$2@Override public T visit\u$3$4(Java8Parser.\u$3$4Context ctx) { return visitChildren(ctx); }
+$2*/
