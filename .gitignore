@@ -1,6 +1,7 @@
 ### Files to ignore
 ##  Mac
 .DS_Store
+(*)/
 
 ##  Java
 *.class
@@ -16,6 +17,8 @@
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
+.idea/dictionary.xml
+.idea/vcs.xml
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
