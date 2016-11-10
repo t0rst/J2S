@@ -21,6 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+package com.satisfyingstructures.J2S;
+
+import com.satisfyingstructures.J2S.antlr.Java8BaseListener;
 
 import org.antlr.v4.runtime.*;
 
