@@ -161,6 +161,68 @@ public class J2SRewriter extends ParseTreeRewriter {
         return null;
     }
 
+    // insert comments
+
+    enum CommentWhere {
+        beforeLineBreak,        // whole line comment on line inserted before that containing token
+        afterLineBreak,         // whole line comment on line inserted before line following that containing token
+        beforeToken,            // insert /* comment */ before token
+        afterToken,             // insert /* comment */ after token
+        atEndOfLine             // append comment to line after //
+    }
+
+    public void insertComment(String comment, ParseTree pt, CommentWhere where)
+    {
+        int idx = where == CommentWhere.beforeToken || where == CommentWhere.beforeLineBreak
+                ? pt.getSourceInterval().a : pt.getSourceInterval().b;
+        insertComment(comment, idx, where);
+    }
+
+    public void insertComment(String comment, Token token, CommentWhere where)
+    {
+        insertComment(comment, token.getTokenIndex(), where);
+    }
+
+    public void insertComment(String comment, int tokenIndex, CommentWhere where)
+    {
+        Token token, tokenWS;
+        String s;
+        switch (where)
+        {
+            case beforeLineBreak:
+                for (token = null; tokenIndex >= 0; tokenIndex--)
+                    if (Java8Parser.LB == (token = tokens.get(tokenIndex)).getType())
+                        break;
+                s = getText(token); // have to get text, because it could be multiline
+                if (Java8Parser.WS == (tokenWS = getTokenFollowing(token)).getType())
+                    s += getText(tokenWS); // Add indent
+                s += "// " + comment + lineBreak;
+                replace(token, s);
+                break;
+            case beforeToken:
+                insertBefore(tokenIndex, "/* " + comment + " */ ");
+                break;
+            case afterToken:
+                insertAfter(tokenIndex, " /* " + comment + " */");
+                break;
+            case afterLineBreak:
+            case atEndOfLine:
+                for (token = null; tokenIndex < tokens.size(); tokenIndex++)
+                    if (Java8Parser.LB == (token = tokens.get(tokenIndex)).getType())
+                        break;
+                if (where == CommentWhere.afterLineBreak)
+                {
+                    s = "";
+                    if (Java8Parser.WS == (tokenWS = getTokenFollowing(token)).getType())
+                        s = getText(tokenWS); // Add indent
+                    insertBefore(token, lineBreak + s + "// " + comment);
+                }
+                else
+                    insertBefore(token, " // " + comment);
+                break;
+        }
+    }
+
     // delete
 
     public void deleteAndAdjustWhitespace(Token token)

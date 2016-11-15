@@ -47,7 +47,17 @@ public class J2SConvertBasicFor {
     {
         J2SConvertBasicFor converter = new J2SConvertBasicFor(rewriter);
         if (!converter.convertBasicForStatementToForInLoop(ctx))
+        {
+            // Insert the original as a comment
+            TerminalNode tnA = ctx.getToken(Java8Parser.FOR, 0), tnB = ctx.getToken(Java8Parser.RPAREN, 0);
+            if (null != tnA && null!= tnB)
+            {
+                CharStream cs = tnA.getSymbol().getInputStream();
+                String s = cs.getText(Interval.of(tnA.getSymbol().getStartIndex(), tnB.getSymbol().getStopIndex()));
+                rewriter.insertComment("original: " + s, ctx, J2SRewriter.CommentWhere.beforeLineBreak);
+            }
             converter.convertBasicForStatementToWhileLoop(ctx);
+        }
     }
 
     private void convertBasicForStatementToWhileLoop( ParserRuleContext ctx )
