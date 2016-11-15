@@ -246,6 +246,32 @@ public class ParseTreeRewriter extends TokenStreamRewriter {
 		return super.getText(programName, interval);
 	}
 
+	public boolean tokenRangeIsChanged(String programName, int from, int to)
+    {
+        ChangedIntervalsList changedIntervals = changedIntervalsByProgram.get(programName);
+        if (null != changedIntervals && !changedIntervals.isChanged(from, to))
+            return false;
+        return true;
+    }
+
+    public boolean tokenRangeIsChanged(int from, int to)
+    {
+        return tokenRangeIsChanged(DEFAULT_PROGRAM_NAME, from, to);
+    }
+
+    public Interval getChangedIntervalContaining(String programName, int from, int to)
+    {
+        ChangedIntervalsList changedIntervals = changedIntervalsByProgram.get(programName);
+        if (null != changedIntervals)
+            return changedIntervals.getChangedIntervalContaining(from, to);
+        return null;
+    }
+
+    public Interval getChangedIntervalContaining(int from, int to)
+    {
+        return getChangedIntervalContaining(DEFAULT_PROGRAM_NAME, from, to);
+    }
+
 	// operations on an Interval
 
 	public void insertAfter(Interval i, Object text) {
@@ -314,7 +340,17 @@ public class ParseTreeRewriter extends TokenStreamRewriter {
 		replace(programName, pt.getSourceInterval(), null);
 	}
 
-	public String getText(Token t) {
+	// additional getText overloads
+
+    public String getText(int from, int to) {
+        return getText(DEFAULT_PROGRAM_NAME, from, to);
+    }
+
+    public String getText(String programName, int from, int to) {
+        return getText(programName, Interval.of(from, to));
+    }
+
+    public String getText(Token t) {
 		return getText(DEFAULT_PROGRAM_NAME, t);
 	}
 

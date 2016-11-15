@@ -137,7 +137,7 @@ class J2SConverter extends Java8BaseListener {
         if (null != stringInSwift && !stringInSwift.equals(stringInJava))
         {
             if (0 == stringInSwift.length())
-                rewriter.deleteWithExcessWhitespace(modifierToken);
+                rewriter.deleteAndAdjustWhitespace(modifierToken);
             else
                 rewriter.replace(modifierToken, stringInSwift);
         }
@@ -173,7 +173,7 @@ class J2SConverter extends Java8BaseListener {
             if (contextRuleIndex == Java8Parser.RULE_classModifier && token.getType() == Java8Parser.STATIC)
             {
                 // special case: static not allowed for classes in Swift
-                rewriter.deleteWithExcessWhitespace(tn);
+                rewriter.deleteAndAdjustWhitespace(tn);
                 continue;
             }
             mapModifierToken(token);
@@ -1053,7 +1053,7 @@ class J2SConverter extends Java8BaseListener {
                     default:                                    continue;
                 }
             }
-            rewriter.deleteWithExcessWhitespace(modifierCtx);
+            rewriter.deleteAndAdjustWhitespace(modifierCtx);
         }
         
         // Move trailing dimensions to wrap the type. First any dimensions binding to the declarator id and
@@ -1163,7 +1163,7 @@ class J2SConverter extends Java8BaseListener {
         switch (constness)
         {
             case explicit:  rewriter.replace(unannTypeCtx, "let");      break;
-            case implicit:  rewriter.deleteWithExcessWhitespace(unannTypeCtx);  break;
+            case implicit:  rewriter.deleteAndAdjustWhitespace(unannTypeCtx);  break;
             case variable:  rewriter.replace(unannTypeCtx, "var");      break;
             // if still unknown, then assume variable...
             default:        rewriter.replace(unannTypeCtx, "var");      break;
@@ -1499,7 +1499,7 @@ class J2SConverter extends Java8BaseListener {
     @Override public void exitThrows_( Java8Parser.Throws_Context ctx )
     {
         // Swift doesn't enumerate the thrown exception types in method/constructor headers
-        rewriter.deleteWithExcessWhitespace(ctx.exceptionTypeList());
+        rewriter.deleteAndAdjustWhitespace(ctx.exceptionTypeList());
     }
 
     /*
@@ -2067,8 +2067,8 @@ class J2SConverter extends Java8BaseListener {
         TerminalNode rightParenTN = ctx.getToken(Java8Parser.RPAREN, 0);
         if (null == leftParenTN || null == rightParenTN)
             return;
-        rewriter.deleteWithExcessWhitespace(leftParenTN);
-        rewriter.deleteWithExcessWhitespace(rightParenTN);
+        rewriter.deleteAndAdjustWhitespace(leftParenTN);
+        rewriter.deleteAndAdjustWhitespace(rightParenTN);
     }
 
     /*
@@ -2667,7 +2667,7 @@ class J2SConverter extends Java8BaseListener {
     */
     @Override public void exitClassInstanceCreationExpression( Java8Parser.ClassInstanceCreationExpressionContext ctx )
     {
-        rewriter.deleteWithExcessWhitespace(ctx.getToken(Java8Parser.NEW, 0));
+        rewriter.deleteAndAdjustWhitespace(ctx.getToken(Java8Parser.NEW, 0));
         mapClassIdentifierInContext(ctx);
     }
 
@@ -2679,7 +2679,7 @@ class J2SConverter extends Java8BaseListener {
     */
     @Override public void exitClassInstanceCreationExpression_lf_primary( Java8Parser.ClassInstanceCreationExpression_lf_primaryContext ctx )
     {
-        rewriter.deleteWithExcessWhitespace(ctx.getToken(Java8Parser.NEW, 0));
+        rewriter.deleteAndAdjustWhitespace(ctx.getToken(Java8Parser.NEW, 0));
         mapClassIdentifierInContext(ctx);
     }
 
@@ -2692,7 +2692,7 @@ class J2SConverter extends Java8BaseListener {
     */
     @Override public void exitClassInstanceCreationExpression_lfno_primary( Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext ctx )
     {
-        rewriter.deleteWithExcessWhitespace(ctx.getToken(Java8Parser.NEW, 0));
+        rewriter.deleteAndAdjustWhitespace(ctx.getToken(Java8Parser.NEW, 0));
         mapClassIdentifierInContext(ctx);
     }
 
@@ -2854,7 +2854,7 @@ class J2SConverter extends Java8BaseListener {
     */
     @Override public void exitArrayCreationExpression( Java8Parser.ArrayCreationExpressionContext ctx )
     {
-        rewriter.deleteWithExcessWhitespace(ctx.getToken(Java8Parser.NEW, 0));
+        rewriter.deleteAndAdjustWhitespace(ctx.getToken(Java8Parser.NEW, 0));
     }
 
     /*
@@ -3188,8 +3188,8 @@ class J2SConverter extends Java8BaseListener {
             exprCtx = ctx.unaryExpression();
             rewriter.insertBefore(exprCtx, "(");
             rewriter.insertAfter(exprCtx, ")");
-            rewriter.deleteWithExcessWhitespace(ctx.start);
-            rewriter.deleteWithExcessWhitespace(tn);
+            rewriter.deleteAndAdjustWhitespace(ctx.start);
+            rewriter.deleteAndAdjustWhitespace(tn);
         }
         else
         {
@@ -3206,7 +3206,7 @@ class J2SConverter extends Java8BaseListener {
                 return;;
             Interval i = Interval.of(typeStartCtx.start.getTokenIndex(), typeEndCtx.stop.getTokenIndex());
             String typeText = rewriter.getText(i);
-            rewriter.deleteWithExcessWhitespace(ctx.start.getTokenIndex(), indexRParenTok);
+            rewriter.deleteAndAdjustWhitespace(ctx.start.getTokenIndex(), indexRParenTok);
             rewriter.insertAfter(exprCtx, " as! "+typeText);
         }
     }

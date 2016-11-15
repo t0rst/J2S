@@ -143,104 +143,235 @@ public class J2SRewriter extends ParseTreeRewriter {
         return singleIndent;
     }
 
-    public void deleteWithExcessWhitespace(Token token)
+    public void deleteAndAdjustWhitespace(Token token)
     {
         int i = token.getTokenIndex();
-        deleteWithExcessWhitespace(i, i);
+        deleteAndAdjustWhitespace(i, i);
     }
 
-    public void deleteWithExcessWhitespace(ParseTree pt)
+    public void deleteAndAdjustWhitespace(ParseTree pt)
     {
         Interval interval = pt.getSourceInterval();
-        deleteWithExcessWhitespace(interval.a, interval.b);
+        deleteAndAdjustWhitespace(interval.a, interval.b);
     }
 
-    public void deleteWithExcessWhitespace(int i, int j)
+    public void deleteAndAdjustWhitespace(int i, int j)
     {
-        // If we have collapsible whitespace on both sides of the deletion, then we need to get rid
-        // of one side. We don't touch the space before if it holds the initial indent for the line
-        // i.e. \n\s+.
-        // Otherwise, if one side is a non-identifier character then space on the other side can be
-        // deleted to allow the neighbouring token to move up flush to the non-identifier.
-        TokenStream ts = getTokenStream();
-        Token tokBfr = ts.get(i-1);
-        Token tokAft = ts.get(j+1);
-        String textBfr = getText(tokBfr);
-        String textAft = getText(tokAft);
-        char charBfr = 0 < textBfr.length() ? textBfr.charAt(textBfr.length()-1) : 'a';
-        char charAft = 0 < textAft.length() ? textAft.charAt(0) : 'a';
-        boolean canDeleteSpaceFromAfter = !Character.isJavaIdentifierStart(charBfr);
-        boolean canDeleteSpaceFromBefore = !Character.isJavaIdentifierStart(charAft)
-                                        && -1 == textBfr.indexOf('\n');
-        int idx, white, len;
-        char c = ' ';
-        boolean deletedSpaceAfter = false;
-        if (canDeleteSpaceFromAfter)
+        replaceAndAdjustWhitespace(i, j, "");
+    }
+
+    public void replaceAndAdjustWhitespace(Token token, String text)
+    {
+        int i = token.getTokenIndex();
+        replaceAndAdjustWhitespace(i, i, text);
+    }
+
+    public void replaceAndAdjustWhitespace(ParseTree pt, String text)
+    {
+        Interval interval = pt.getSourceInterval();
+        replaceAndAdjustWhitespace(interval.a, interval.b, text);
+    }
+
+    boolean recommendKeepSeparate(int codePointL, int codePointR)
+    {
+        boolean idCharL = Character.isJavaIdentifierPart(codePointL);
+        boolean idCharR = Character.isJavaIdentifierPart(codePointR);
+        boolean keepSeparate = false;
+        if (idCharL && idCharR)
+            keepSeparate = true;
+        else if (idCharR)
         {
-            for (idx = 0, white = 0, len = textAft.length(); idx < len; idx++, white++)
-                if (' ' != (c = textAft.charAt(idx)) && '\t' != c)
-                    break;
-            if (0 < white)
+            // crude and not comprehensive, but good enough for now...
+            switch (codePointL)
             {
-                replace(tokAft, textAft.substring(white));
-                deletedSpaceAfter = true;
+                case '=': case ',': case '?': case '}':
+                case '*': case '/': case '+': case '-':
+                keepSeparate = true;
+                break;
             }
         }
-        if (canDeleteSpaceFromBefore)
+        else if (idCharL)
         {
-            for (idx = textBfr.length(), white = 0; 0 < idx; white++)
-                if (' ' != (c = textBfr.charAt(--idx)) && '\t' != c)
-                    break;
-            if (0 < white && deletedSpaceAfter)
-                {white--; idx++;}
-            if (0 < white)
-                replace(tokBfr, textBfr.substring(0, idx));
-        }
-        // Finally delete the range. We do this separately from collapsing whitespace because the
-        // rewriter throws an exception if a later rewrite request partially overlaps an earlier
-        // request, which can easily happen if we group the delete range with tokens on either side
-        // and and an enclosing range is later requested that shares an edge with the original
-        // deletion.
-        replace(i, j, null);
-    }
-
-    public void replaceAndSurroundWithWhitespace(Token token, String text)
-    {
-        int i = token.getTokenIndex();
-        replaceAndSurroundWithWhitespace(i, i, text);
-    }
-
-    public void replaceAndSurroundWithWhitespace(ParseTree pt, String text)
-    {
-        Interval interval = pt.getSourceInterval();
-        replaceAndSurroundWithWhitespace(interval.a, interval.b, text);
-    }
-
-    public void replaceAndSurroundWithWhitespace(int i, int j, String text)
-    {
-        // Sort out the surrounding text
-        int idx, separation, len;
-        Token token;
-        char c = ' ';
-        for (idx = 0, separation = 0, len = text.length(); idx < len; idx++, separation++)
-            if (' ' != (c = text.charAt(idx)) && '\t' != c)
+            switch (codePointR)
+            {
+                case '=': case ',': case '?': case '{': case '!':
+                case '*': case '/': case '+': case '-':
+                keepSeparate = true;
                 break;
-        if (0 == separation && Character.isJavaIdentifierStart(c))
-        {
-            token = getTokenStream().get(i-1);
-            if (token.getType() != Java8Parser.WS && token.getType() != Java8Parser.COMMENT)
-                text = " "+text;
+            }
         }
-        for (idx = text.length() - 1, separation = 0; 0 <= idx; idx--, separation++)
-            if (' ' != (c = text.charAt(idx)) && '\t' != c)
-                break;
-        if (0 == separation && Character.isJavaIdentifierPart(c))
+        return keepSeparate;
+    }
+
+    public void replaceAndAdjustWhitespace(int from, int to, String text)
+    {
+        // The aim here is to prevent text merging with adjacent tokens (and to separate as looks reasonable).
+
+        // It would be much better if TokenStreamRewriter recorded alterations as token insertions, deletions, moves and
+        // alterations, so that lexical and structural information is retained as much as possible, then we would just
+        // need a final pass before the end of processing to insert essential whitespace tokens. However, it doesn't.
+
+        // The problem is that because the insertions and replacements are expressed as strings, lexical information is
+        // lost, and we can no longer be certain what the type of adjacent tokens is - it may well have already been
+        // rewritten. Hence we have to fallback to testing the adjacent token text - what a pain. Which leads to this
+        // fragile, messy code.
+
+        // Furthermore, when we scan backwards and forwards for adjacent non-empty tokens, we can find 'residue': where
+        // a whole rule context has been replaced with an empty string, getText for the first token returns empty, but
+        // getText for the following token (i.e. inside the subtree of the context) can return the original token text
+        // - rewriter doesn't expect us to be asking for this token's text, and does not apply correct transform - so
+        // we see something that will not actually be output in the final rewritten stream. We can't trust what we see.
+        // (Root cause is TokenStreamRewriter.reduceToSingleOperationPerIndex - operation per index only returns the
+        // right operation for the first index of the range it changes.)
+        // Hard one to workaround.
+
+        // OK, worked around it - here's how: in ParseTreeRewriter, we maintain a changed interval map. When we scan
+        // through adjacent text, if a token is in a changed interval, get the whole changed text, otherwise get the
+        // token text.
+
+        String textL, textR;
+        Interval interval;
+        int i, tokenIdxL, tokenIdxR, lenL, lenR, wsL, wsR, wsWanted;
+        int tokenIdxL_WSFrom, tokenIdxL_WSTo, tokenIdxR_WSFrom, tokenIdxR_WSTo;
+        int codePointL, codePointR;
+        boolean leftIsIndent;
+        boolean keepSeparate;
+
+        text = text.trim();
+
+        // Assess left: count whitespace and stop when first non-white character reached
+        tokenIdxL = from - 1; textL = null;
+        tokenIdxL_WSFrom = tokenIdxL_WSTo = -1;
+        codePointL = 0; wsL = 0; i = -1;
+        assessL: while ( 0 <= tokenIdxL )
         {
-            token = getTokenStream().get(j+1);
-            if (token.getType() != Java8Parser.WS && token.getType() != Java8Parser.COMMENT)
-                text += " ";
+            if (null != (interval = getChangedIntervalContaining(tokenIdxL, tokenIdxL)))
+                textL = getText(interval);
+            else
+                textL = getText(tokenIdxL, tokenIdxL);
+            for (lenL = textL.length(), i = lenL-1; 0 <= i; i--)
+            {
+                codePointL = textL.codePointAt(i);
+            //  if (Character.SPACE_SEPARATOR != Character.getType(codePointL))
+            //  ...doesn't work as expected - getType('\t') primary category is not SPACE_SEPARATOR, so test explicitly
+                if (' ' != codePointL && '\t' != codePointL)
+                    break assessL;
+                wsL++;
+                tokenIdxL_WSFrom = null != interval ? interval.a : tokenIdxL;
+                if (tokenIdxL_WSTo == -1)
+                    tokenIdxL_WSTo = null != interval ? interval.b : tokenIdxL;
+            }
+            tokenIdxL = null != interval ? interval.a - 1 : tokenIdxL - 1;
+            textL = null;
         }
+        // leftIsIndent = Character.LINE_SEPARATOR == Character.getType(codePointL)
+        // ...doesn't work as expected - getType('\n') primary category is CONTROL not LINE_SEPARATOR, so test explicitly
+        leftIsIndent = codePointL == '\n' || codePointL == '\r' || (0 > tokenIdxL && 0 > i);
+
+        // Assess right: count whitespace and stop when first non-white character reached
+        tokenIdxR = to + 1; textR = null;
+        tokenIdxR_WSFrom = tokenIdxR_WSTo = -1;
+        codePointR = 0; wsR = 0;
+        assessR: while ( tokenIdxR < tokens.size() )
+        {
+            if (null != (interval = getChangedIntervalContaining(tokenIdxR, tokenIdxR)))
+                textR = getText(interval);
+            else
+                textR = getText(tokenIdxR, tokenIdxR);
+            for (i = 0, lenR = textR.length(); i < lenR; i++)
+            {
+                codePointR = textR.codePointAt(i);
+            //  if (Character.SPACE_SEPARATOR != Character.getType(codePointR))
+            //  ...doesn't work as expected - getType('\t') primary category is not SPACE_SEPARATOR, so test explicitly
+                if (' ' != codePointR && '\t' != codePointR)
+                    break assessR;
+                wsR++;
+                if (tokenIdxR_WSFrom == -1)
+                    tokenIdxR_WSFrom = null != interval ? interval.a : tokenIdxR;
+                tokenIdxR_WSTo = null != interval ? interval.b : tokenIdxR;
+            }
+            tokenIdxR = null != interval ? interval.b + 1 : tokenIdxR + 1;
+            textR = null;
+        }
+
+        if (0 < text.length())
+        {
+            keepSeparate = recommendKeepSeparate(codePointL, text.codePointAt(0));
+            wsWanted = keepSeparate ? 1 : 0;
+            if (!leftIsIndent && wsL != wsWanted)
+            {
+                if (wsL == 0)
+                {
+                    // with no white space on the left, we can use the replacement text
+                    text = " " + text;
+                }
+                else
+                {
+                    // We have an excess of whitespace
+                    String s = tokenIdxL == tokenIdxL_WSTo
+                             ? textL
+                             : getText(tokenIdxL_WSFrom, tokenIdxL_WSTo);
+                    s = s.substring(0, s.length() - (wsL - wsWanted)); // trim excess from end
+                    replace(tokenIdxL_WSFrom, tokenIdxL_WSTo, s);
+                }
+            }
+
+            // Same again for RHS
+            keepSeparate = recommendKeepSeparate(text.codePointAt(text.length()-1), codePointR);
+            wsWanted = keepSeparate ? 1 : 0;
+            if (wsR != wsWanted)
+            {
+                if (wsR == 0)
+                {
+                    // with no white space on the right, we can use the replacement text
+                    text += " ";
+                }
+                else
+                {
+                    // We have an excess of whitespace
+                    String s = tokenIdxR == tokenIdxR_WSFrom
+                             ? textR
+                             : getText(tokenIdxR_WSFrom, tokenIdxR_WSTo);
+                    s = s.substring(wsR - wsWanted); // trim excess from start
+                    replace(tokenIdxR_WSFrom, tokenIdxR_WSTo, s);
+                }
+            }
+        }
+        else
+        if (0 < from && to < tokens.size()-1)
+        {
+            keepSeparate = recommendKeepSeparate(codePointL, codePointR);
+            wsWanted = keepSeparate && !leftIsIndent ? 1 : 0;
+            if (leftIsIndent)
+                ; // do nothing to left
+            else if (wsL == wsWanted)
+                wsWanted -= wsL;
+            else if (wsL > wsWanted)
+            {
+                // We have an excess of whitespace
+                String s = tokenIdxL == tokenIdxL_WSTo
+                         ? textL
+                         : getText(tokenIdxL_WSFrom, tokenIdxL_WSTo);
+                s = s.substring(0, s.length() - (wsL - wsWanted)); // trim excess from end
+                replace(tokenIdxL_WSFrom, tokenIdxL_WSTo, s);
+                wsWanted = 0;
+            }
+
+            if (wsR > wsWanted)
+            {
+                String s = tokenIdxR == tokenIdxR_WSFrom
+                         ? textR
+                         : getText(tokenIdxR_WSFrom, tokenIdxR_WSTo);
+                s = s.substring(wsR - wsWanted); // trim excess from start
+                replace(tokenIdxR_WSFrom, tokenIdxR_WSTo, s);
+            }
+            else if (wsR < wsWanted)
+            {
+                text = " ";
+            }
+        }
+
         // Finally replace the requested interval
-        replace(DEFAULT_PROGRAM_NAME, i, j, text);
+        replace(from, to, text);
     }
 }

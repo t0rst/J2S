@@ -247,11 +247,11 @@ public class J2SConvertBasicFor {
             if (needOuterScope)
                 rewriter.replace(token, "do {");
             else
-                rewriter.deleteWithExcessWhitespace(token);
+                rewriter.deleteAndAdjustWhitespace(token);
 
             // T2 '('      : delete
         //  token = (tn = ctx.getToken(Java8Parser.LPAREN, 0)).getSymbol();
-        //  rewriter.deleteWithExcessWhitespace(token);
+        //  rewriter.deleteAndAdjustWhitespace(token);
         // ...now deleted separately
 
             // T3 no change
@@ -274,7 +274,7 @@ public class J2SConvertBasicFor {
             replacement += " while ";
             if (null == expressionCtx)
                 replacement += " true";
-            rewriter.replaceAndSurroundWithWhitespace(token, replacement);
+            rewriter.replaceAndAdjustWhitespace(token, replacement);
 
             // T5 expression? : unchanged
 
@@ -318,7 +318,7 @@ public class J2SConvertBasicFor {
             if (needOuterScope)
                 afterBrace += " }";
             replacement = beforeBrace+"}"+afterBrace;
-            rewriter.replaceAndSurroundWithWhitespace(interval.a, interval.b, replacement);
+            rewriter.replaceAndAdjustWhitespace(interval.a, interval.b, replacement);
         }
         // labelling
         @Override public Object visitBreakStatement(Java8Parser.BreakStatementContext ctx)
