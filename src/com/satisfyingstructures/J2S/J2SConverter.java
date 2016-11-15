@@ -3268,16 +3268,30 @@ class J2SConverter extends Java8BaseListener {
         :   '++' unaryExpression
         ;
     @Override public void enterPreIncrementExpression( Java8Parser.PreIncrementExpressionContext ctx ) {}
-    @Override public void exitPreIncrementExpression( Java8Parser.PreIncrementExpressionContext ctx ) {}
     */
+    @Override public void exitPreIncrementExpression( Java8Parser.PreIncrementExpressionContext ctx )
+    {
+        // Cater for the simple case of ++a --> a+=1. Leave more complex cases for manual fix.
+        rewriter.delete(ctx.start);
+        rewriter.replace(ctx.stop, rewriter.getText(ctx.stop) + " += 1");
+        // ...using insertAfter instead is problematic as the text pre-pends to the following token and a subsequent
+        // rewriter.getText() for this context will not retrieve it.
+    }
 
     /*
     preDecrementExpression
         :   '--' unaryExpression
         ;
     @Override public void enterPreDecrementExpression( Java8Parser.PreDecrementExpressionContext ctx ) {}
-    @Override public void exitPreDecrementExpression( Java8Parser.PreDecrementExpressionContext ctx ) {}
     */
+    @Override public void exitPreDecrementExpression( Java8Parser.PreDecrementExpressionContext ctx )
+    {
+        // Cater for the simple case of --a --> a-=1. Leave more complex cases for manual fix.
+        rewriter.delete(ctx.start);
+        rewriter.replace(ctx.stop, rewriter.getText(ctx.stop) + " -= 1");
+        // ...using insertAfter instead is problematic as the text pre-pends to the following token and a subsequent
+        // rewriter.getText() for this context will not retrieve it.
+    }
 
     /*
     unaryExpressionNotPlusMinus
@@ -3300,16 +3314,35 @@ class J2SConverter extends Java8BaseListener {
             )*
         ;
     @Override public void enterPostfixExpression( Java8Parser.PostfixExpressionContext ctx ) {}
-    @Override public void exitPostfixExpression( Java8Parser.PostfixExpressionContext ctx ) {}
     */
+    @Override public void exitPostfixExpression( Java8Parser.PostfixExpressionContext ctx )
+    {
+        int increments = ctx.getChildCount() - 1;
+        int increment = 0;
+        for (int i = 0; i < increments; i++)
+        {
+            ParserRuleContext postfixCtx = ctx.getChild(ParserRuleContext.class, i+1);
+            switch (postfixCtx.getRuleIndex()) {
+                case Java8Parser.RULE_postIncrementExpression_lf_postfixExpression: increment++; break;
+                case Java8Parser.RULE_postDecrementExpression_lf_postfixExpression: increment--; break;
+            }
+            rewriter.delete(postfixCtx);
+        }
+        if (0 != increment)
+            rewriter.replace(ctx.stop, 0 < increment ? (" += " + increment) : (" -= " + -increment));
+    }
 
     /*
     postIncrementExpression
         :   postfixExpression '++'
         ;
     @Override public void enterPostIncrementExpression( Java8Parser.PostIncrementExpressionContext ctx ) {}
-    @Override public void exitPostIncrementExpression( Java8Parser.PostIncrementExpressionContext ctx ) {}
     */
+    @Override public void exitPostIncrementExpression( Java8Parser.PostIncrementExpressionContext ctx )
+    {
+        // Cater for the simple case of a++ --> a+=1. Leave more complex cases for manual fix.
+        rewriter.replace(ctx.stop, " += 1");
+    }
 
     /*
     postIncrementExpression_lf_postfixExpression
@@ -3324,8 +3357,12 @@ class J2SConverter extends Java8BaseListener {
         :   postfixExpression '--'
         ;
     @Override public void enterPostDecrementExpression( Java8Parser.PostDecrementExpressionContext ctx ) {}
-    @Override public void exitPostDecrementExpression( Java8Parser.PostDecrementExpressionContext ctx ) {}
     */
+    @Override public void exitPostDecrementExpression( Java8Parser.PostDecrementExpressionContext ctx )
+    {
+        // Cater for the simple case of a-- --> a-=1. Leave more complex cases for manual fix.
+        rewriter.replace(ctx.stop, " -= 1");
+    }
 
     /*
     postDecrementExpression_lf_postfixExpression
