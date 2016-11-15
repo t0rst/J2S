@@ -1766,8 +1766,14 @@ ELLIPSIS : '...';
 //
 // Whitespace and comments
 //
+// Hidden, not skipped, which allows them to be preserved when needed.
+// Lexing line breaks and other whitespace into separate tokens makes handling of whole line insertions easier
+//
 
-WS  :  [ \t\r\n\u000C]+ -> channel(HIDDEN) // not skipped - we want the white space
+LB  :  [\r\n]+ -> channel(HIDDEN)
+    ;
+
+WS  :  [ \t\u000C]+ -> channel(HIDDEN)
     ;
 
 COMMENT
