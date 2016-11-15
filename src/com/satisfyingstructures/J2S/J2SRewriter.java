@@ -33,13 +33,114 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /// J2SRewriter provides additional rewriter utility functions specific to the needs of J2S
 public class J2SRewriter extends ParseTreeRewriter {
 
+    public final String lineBreak;      // the standard linebreak used in the token stream
+    public final String singleIndent;   // the standard single indent used in the token stream
+
     public J2SRewriter(ParseTree tree, TokenStream tokens)
     {
         super(tree, tokens);
+        lineBreak = discoverLineBreakType(tokens);
+        singleIndent = discoverSingelIndentType(tokens);
+    }
+
+    static String discoverLineBreakType(TokenStream tokens)
+    {
+        String s = "\n";
+        for (int i = 0, sz = tokens.size(); i < sz; i++)
+        {
+            Token t = tokens.get(i);
+            if (null == t || t.getType() != Java8Parser.LB)
+                continue;
+            s = t.getText();
+            if (-1 != (i = s.indexOf(s.charAt(0), 1))) // remove any later repetitions
+                s = s.substring(0, i);
+            break;
+        }
+        return s;
+    }
+
+    static String discoverSingelIndentType(TokenStream tokens)
+    {
+        String singleIndent = "\t";
+        int depth = 0;
+        List<Token> recentIndentsByDepth = new ArrayList<>();
+        Map<String, Integer> countOfIndentStyle = new HashMap<>();
+        int countOfIndents = 0;
+        for (int i = 0, sz = tokens.size(); i < sz; i++)
+        {
+            Token t = tokens.get(i);
+            if (null == t)
+                continue;
+            switch (t.getType())
+            {
+                case Java8Parser.RBRACE:
+                    break;
+                case Java8Parser.LBRACE:
+                    depth++;
+                    for (int j = recentIndentsByDepth.size(); j <= depth; j++)
+                        recentIndentsByDepth.add(j, null);
+                default:
+                    continue;
+            }
+            if (i > 2)
+            {
+                Token tWS = tokens.get(i-1);
+                if (tWS.getType() == Java8Parser.WS && tokens.get(i-2).getType() == Java8Parser.LB)
+                {
+                    recentIndentsByDepth.set(depth, tWS);
+                    if (depth + 1 < recentIndentsByDepth.size()
+                     && null != (t = recentIndentsByDepth.get(depth + 1)))
+                    {
+                        String deep = tWS.getText();
+                        String deeper = t.getText();
+                        if (deeper.startsWith(deep))
+                        {
+                            singleIndent = deeper.substring(deep.length());
+                            Integer count = countOfIndentStyle.get(singleIndent);
+                            if (null == count)
+                                countOfIndentStyle.put(singleIndent, 1);
+                            else
+                            {
+                                float share = count.floatValue()/(float)countOfIndents;
+                                if (countOfIndents >= 4 && share == 1)
+                                    return singleIndent; // winner, consistent use
+                                if (countOfIndents > 10 && share > .9)
+                                    return singleIndent; // winner, inconsistent use
+                                if (countOfIndents > 20 && share > .7)
+                                    return singleIndent; // winner, variable use
+                                countOfIndentStyle.put(singleIndent, count + 1);
+                            }
+                            countOfIndents++;
+                        }
+                        recentIndentsByDepth.set(depth + 1, null);
+                    }
+                }
+            }
+            depth--;
+        }
+        // No early winner, so pick most frequent
+        int best = 0;
+        for (Map.Entry<String, Integer> indentStyle : countOfIndentStyle.entrySet())
+        {
+            int count = indentStyle.getValue();
+            countOfIndents -= count; // --> remaining
+            if (best < count)
+            {
+                best = count;
+                singleIndent = indentStyle.getKey();
+                if (countOfIndents < count)
+                    return singleIndent; // cant be beaten now
+            }
+        }
+        return singleIndent;
     }
 
     public void deleteWithExcessWhitespace(Token token)
