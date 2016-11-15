@@ -89,7 +89,7 @@ class J2SConverter extends Java8BaseListener {
                 "Boolean",  "Bool",
                 "Byte",     "Int8",
                 "Short",    "Int16",
-                "Int",      "Int",
+                "Integer",  "Int",
                 "Long",     "Int64",
                 "Char",     "UInt16",
                 "Float",    "Float",
@@ -103,6 +103,7 @@ class J2SConverter extends Java8BaseListener {
                 "HashMap",  "Dictionary",
                 "Set",      "Set",
                 "HashSet",  "Set",
+                "Vector",   "Array", // to do: need to (be able to) warn ensure sync access with vars of this type
 
                 "",""
         );
@@ -170,11 +171,25 @@ class J2SConverter extends Java8BaseListener {
             if (null == tn)
                 continue; // annotation - dealt with separately
             Token token = tn.getSymbol();
-            if (contextRuleIndex == Java8Parser.RULE_classModifier && token.getType() == Java8Parser.STATIC)
+            // Handle special token cases
+            switch (token.getType())
             {
-                // special case: static not allowed for classes in Swift
-                rewriter.deleteAndAdjustWhitespace(tn);
-                continue;
+                case Java8Parser.STATIC:
+                    if (contextRuleIndex == Java8Parser.RULE_classModifier)
+                    {
+                        rewriter.deleteAndAdjustWhitespace(tn); // static not allowed for classes in Swift
+                        continue;
+                    }
+                    break;
+                case Java8Parser.PRIVATE:
+                case Java8Parser.PROTECTED:
+                case Java8Parser.PUBLIC:
+                    if (contextRuleIndex == Java8Parser.RULE_interfaceMethodModifier)
+                    {
+                        rewriter.deleteAndAdjustWhitespace(tn); // access control not allowed for protocols in Swift
+                        continue;
+                    }
+                    break;
             }
             mapModifierToken(token);
         }
@@ -981,6 +996,8 @@ class J2SConverter extends Java8BaseListener {
 
     private void convertVariableDeclaration( ParserRuleContext declarationCtx )
     {
+        // Read comments in exitVariableDeclaratorId just above!
+
         int declarationRuleIndex = declarationCtx.getRuleIndex();
         Class<? extends ParserRuleContext> modifierContextClass = Java8Parser.VariableModifierContext.class;
         Constness constness = Constness.unknown;
@@ -1416,7 +1433,7 @@ class J2SConverter extends Java8BaseListener {
             if (null != outerDimsCtx)
                 unannTypeText = wrapTypeStringWithDims(unannTypeText, outerDimsCtx);
 
-            rewriter.insertAfter(ctx.methodDeclarator(), " -> "+unannTypeText);
+            rewriter.insertAfter(ctx.stop, " -> "+unannTypeText);
         }
         rewriter.replace(resultCtx, "func");
     }
@@ -2006,7 +2023,8 @@ class J2SConverter extends Java8BaseListener {
 
     private void addBracesAroundStatementIfNecessary(ParserRuleContext ctx)
     {
-        // ensure the statement(s) with if(else), for, while and do is always wrapped in braces
+        // Ensure the statement(s) with if(else), for, while and do is always wrapped in braces.
+        // At the same time, remove the parentheses around the test/control part for the statement
         int statementRule = ctx.getRuleIndex();
         if ( statementRule != Java8Parser.RULE_statement
           && statementRule != Java8Parser.RULE_statementNoShortIf )
@@ -2058,6 +2076,8 @@ class J2SConverter extends Java8BaseListener {
             default:
                 return;
         }
+
+        // Remove the parentheses around the test/control part for the statement
         removeParenthesesAroundExpression(parent);
     }
 
@@ -2582,8 +2602,19 @@ class J2SConverter extends Java8BaseListener {
         |   tryWithResourcesStatement
         ;
     @Override public void enterTryStatement( Java8Parser.TryStatementContext ctx ) {}
-    @Override public void exitTryStatement( Java8Parser.TryStatementContext ctx ) {}
     */
+    @Override public void exitTryStatement( Java8Parser.TryStatementContext ctx )
+    {
+        // In Swift, a 'try' block becomes a 'do' block and individual calls within the block have to be prefixed with
+        // 'try' if they are capable of throwing. We can't work this out because we don't have access to the the throws
+        // property of all invoked functions and methods. This is easier solved by later manual correction as the Swift
+        // compiler will identify them for us.
+        TerminalNode tn = ctx.getToken(Java8Parser.TRY, 0);
+        if (null == tn)
+            tn = ctx.tryWithResourcesStatement().getToken(Java8Parser.TRY, 0);
+        if (null != tn)
+            rewriter.replace(tn, "do");
+    }
 
     /*
     catches
@@ -3388,8 +3419,14 @@ class J2SConverter extends Java8BaseListener {
         if (null != (typeStartCtx = ctx.primitiveType()))
         {
             exprCtx = ctx.unaryExpression();
-            rewriter.insertBefore(exprCtx, "(");
-            rewriter.insertAfter(exprCtx, ")");
+            // If expression is already parenthesized, then these existing parentheses will do for enclosing the
+            // expression as argument to making the case type. Just use a simple test, and leave cases like
+            // (TypeC)(TypeB)a
+            if (exprCtx.start.getType() != Java8Parser.LPAREN || exprCtx.stop.getType() != Java8Parser.RPAREN)
+            {
+                rewriter.insertBefore(exprCtx, "(");
+                rewriter.insertAfter(exprCtx, ")");
+            }
             rewriter.deleteAndAdjustWhitespace(ctx.start);
             rewriter.deleteAndAdjustWhitespace(tn);
         }

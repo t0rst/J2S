@@ -42,6 +42,7 @@ public class J2SGrammarUtils
         // expression.
         // First validate parameter
         switch (ctx.getRuleIndex()) {
+            case Java8Parser.RULE_constantExpression:
             case Java8Parser.RULE_expression:
             case Java8Parser.RULE_assignmentExpression:
             case Java8Parser.RULE_conditionalExpression:
@@ -58,6 +59,8 @@ public class J2SGrammarUtils
             case Java8Parser.RULE_unaryExpression:
             case Java8Parser.RULE_unaryExpressionNotPlusMinus:
             case Java8Parser.RULE_postfixExpression:
+            case Java8Parser.RULE_primary:
+            case Java8Parser.RULE_primaryNoNewArray_lfno_primary:
                 break;
             default:
                 return ctx; // not an acceptable parameter type

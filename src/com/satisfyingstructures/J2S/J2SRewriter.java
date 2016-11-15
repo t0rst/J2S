@@ -161,6 +161,8 @@ public class J2SRewriter extends ParseTreeRewriter {
         return null;
     }
 
+    // delete
+
     public void deleteAndAdjustWhitespace(Token token)
     {
         int i = token.getTokenIndex();
@@ -183,6 +185,8 @@ public class J2SRewriter extends ParseTreeRewriter {
         int i = token.getTokenIndex();
         replaceAndAdjustWhitespace(i, i, text);
     }
+
+    // replace
 
     public void replaceAndAdjustWhitespace(ParseTree pt, String text)
     {

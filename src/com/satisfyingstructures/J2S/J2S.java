@@ -147,7 +147,7 @@ public class J2S
                     break;
                 case "w":
                     if (null == (path = nextArg()) || 0 == path.length())
-                        return oops("expected argument -i to be followed by a directory path.");
+                        return oops("expected argument -w to be followed by a directory path.");
                     if ( !(f = new File(path)).isDirectory() )
                         return oops("expected argument -w to have existing directory path: "+path);
                     wd = f;

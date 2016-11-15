@@ -50,6 +50,12 @@ public class J2SConvertBasicFor {
             converter.convertBasicForStatementToWhileLoop(ctx);
     }
 
+    private void convertBasicForStatementToWhileLoop( ParserRuleContext ctx )
+    {
+        BasicForToWhileConverter cvt = new BasicForToWhileConverter();
+        cvt.convert(ctx);
+    }
+
     private class BasicForToWhileConverter extends Java8BaseVisitor<Object>
     {
         /*  Swift 3.0 eliminated the for(;;) statement from the language (for strong business cases such as 'It is rarely
@@ -280,15 +286,14 @@ public class J2SConvertBasicFor {
 
             // T6 ';'      : delete
             token = (tn = ctx.getToken(Java8Parser.SEMI, 1)).getSymbol();
-            rewriter.replace(token, null);
+            rewriter.deleteAndAdjustWhitespace(token);
 
             // T7 forUpdate: if present, getText of this token from rewriter and save for later, then delete forUpdate
             String forUpdateText = null;
             if (null != forUpdateCtx)
             {
-                startIdx = forUpdateCtx.start.getTokenIndex(); stopIdx = forUpdateCtx.stop.getTokenIndex();
-                forUpdateText = rewriter.getText(Interval.of(startIdx, stopIdx));
-                rewriter.replace(startIdx, stopIdx, null);
+                forUpdateText = rewriter.getText(forUpdateCtx);
+                rewriter.delete(forUpdateCtx);
             }
 
             // T8 ')'      : if needInnerScope replace with '{ do', otherwise delete
@@ -493,11 +498,4 @@ public class J2SConvertBasicFor {
 
         return false;
     }
-
-    private void convertBasicForStatementToWhileLoop( ParserRuleContext ctx )
-    {
-        BasicForToWhileConverter cvt = new BasicForToWhileConverter();
-        cvt.convert(ctx);
-    }
-
 }
