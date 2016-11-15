@@ -2213,24 +2213,189 @@ class J2SConverter extends Java8BaseListener {
         :   '{' switchBlockStatementGroup* switchLabel* '}'
         ;
     @Override public void enterSwitchBlock( Java8Parser.SwitchBlockContext ctx ) {}
-    @Override public void exitSwitchBlock( Java8Parser.SwitchBlockContext ctx ) {}
     */
+    @Override public void exitSwitchBlock( Java8Parser.SwitchBlockContext ctx )
+    {
+        if (ctx.getChildCount() <= 2) return; // (...assure the compiler)
+
+        // Ensure any trailing switch labels are grouped and end with a break, and we add a default clause if missing
+        List<Java8Parser.SwitchLabelContext> switchLabels = ctx.switchLabel();
+        Java8Parser.SwitchLabelContext switchLabelCtx;
+        Token appendToToken = null;
+        String append = "";
+
+        // First need newline + indent for our insertions
+        String wrap = rewriter.lineBreak;
+        Token token = rewriter.getTokenPreceding(ctx.getChild(ParserRuleContext.class, 0).start);
+        if (null != token && token.getType() == Java8Parser.WS)
+            wrap += token.getText();
+
+        // Get the last switch label
+        if (!switchLabels.isEmpty())
+        {
+            groupConsecutiveSwitchLabels(switchLabels);
+            // Check if the last label is a default
+            switchLabelCtx = switchLabels.get(switchLabels.size()-1);
+            if (switchLabelCtx.getChildCount() != 2) // two tokens for default + :, three for case + value + :
+            {
+                if (switchLabels.size() > 1) // can't merge previous case labels with default, so have to fallthrough
+                    append = wrap + rewriter.singleIndent + "fallthrough";
+                append += wrap + "default:";
+            }
+            append += wrap + rewriter.singleIndent + "break";
+            appendToToken = switchLabelCtx.stop;
+        }
+        else
+        {
+            // No orphan switch labels, so child count - 2 is count of statement groups. Get the last one.
+            Java8Parser.SwitchBlockStatementGroupContext grp = ctx.switchBlockStatementGroup(ctx.getChildCount() - 3);
+            switchLabels = grp.switchLabels().switchLabel();
+            // Check if the last label is a default
+            switchLabelCtx = switchLabels.get(switchLabels.size()-1);
+            if (switchLabelCtx.getChildCount() != 2) // two tokens for default + :, three for case + value + :
+            {
+                append += wrap + "default:" + wrap + rewriter.singleIndent + "break";
+                appendToToken = grp.stop;
+            }
+        }
+
+        if (null != appendToToken)
+            rewriter.insertAfter(appendToToken, append);
+    }
 
     /*
     switchBlockStatementGroup
         :   switchLabels blockStatements
         ;
     @Override public void enterSwitchBlockStatementGroup( Java8Parser.SwitchBlockStatementGroupContext ctx ) {}
-    @Override public void exitSwitchBlockStatementGroup( Java8Parser.SwitchBlockStatementGroupContext ctx ) {}
     */
+    @Override public void exitSwitchBlockStatementGroup( Java8Parser.SwitchBlockStatementGroupContext ctx )
+    {
+        // Append explicit 'fallthrough' if there is a path without a break (only simplest cases)
+        if (!statementEndsWithSwitchExit(ctx.blockStatements()))
+        {
+            String append = rewriter.lineBreak
+                          + rewriter.getTokenPreceding(ctx.start).getText() // indent
+                          + rewriter.singleIndent
+                          + "fallthrough";
+            rewriter.insertAfter(ctx.stop, append);
+        }
+    }
+
+    private boolean statementEndsWithSwitchExit( ParserRuleContext ctx )
+    {
+        ParserRuleContext subCtx = ctx;
+        for (ctx = subCtx; ctx != null; ctx = subCtx)
+        {
+            switch (ctx.getRuleIndex())
+            {
+                case Java8Parser.RULE_blockStatements:
+                    subCtx = ctx.getChild(Java8Parser.BlockStatementContext.class, ctx.getChildCount()-1);
+                    continue;
+                case Java8Parser.RULE_blockStatement:
+                    subCtx = ctx.getChild(ParserRuleContext.class, 0); // class or local var decl, or other statement
+                    continue;
+                case Java8Parser.RULE_localVariableDeclarationStatement:
+                    return false;
+                case Java8Parser.RULE_classDeclaration:
+                    return false;
+                case Java8Parser.RULE_statement:
+                case Java8Parser.RULE_statementNoShortIf:
+                    subCtx = ctx.getChild(ParserRuleContext.class, 0);
+                    continue;
+                case Java8Parser.RULE_statementWithoutTrailingSubstatement:
+                    subCtx = ctx.getChild(ParserRuleContext.class, 0);
+                    continue;
+                case Java8Parser.RULE_labeledStatement:
+                case Java8Parser.RULE_labeledStatementNoShortIf:
+                    // Identifier ':' (statement|statementNoShortIf)
+                    // nodes 1 & 2 are terminal nodes; node 3 is first rule node
+                    subCtx = ctx.getChild(ParserRuleContext.class, 0);
+                    continue;
+                case Java8Parser.RULE_breakStatement:
+                case Java8Parser.RULE_continueStatement:
+                case Java8Parser.RULE_returnStatement:
+                case Java8Parser.RULE_throwStatement:
+                    return true;
+                case Java8Parser.RULE_ifThenStatement:
+                    return false;
+                case Java8Parser.RULE_ifThenElseStatement:
+                case Java8Parser.RULE_ifThenElseStatementNoShortIf:
+                    // 'if' '(' expression ')' statementNoShortIf 'else' statement
+                    // if-statement is second rule node; else-statement is third rule node; others are terminal nodes
+                    return statementEndsWithSwitchExit(ctx.getChild(ParserRuleContext.class, 1))
+                        && statementEndsWithSwitchExit(ctx.getChild(ParserRuleContext.class, 2));
+                case Java8Parser.RULE_whileStatement:
+                case Java8Parser.RULE_whileStatementNoShortIf:
+                case Java8Parser.RULE_forStatement:
+                case Java8Parser.RULE_forStatementNoShortIf:
+                case Java8Parser.RULE_doStatement:
+                    // indeterminate: whether a nested exit is hit depends on data
+                    return false;
+                case Java8Parser.RULE_block:
+                    // '{' blockStatements? '}'
+                    // ctx.getChildCount() counts both rule and terminal nodes; nbr of rule nodes is two less here;
+                    subCtx = ctx.getChild(ParserRuleContext.class, ctx.getChildCount()-3);
+                    continue;
+                case Java8Parser.RULE_emptyStatement:
+                case Java8Parser.RULE_expressionStatement:
+                case Java8Parser.RULE_assertStatement:
+                    return false;
+                case Java8Parser.RULE_switchStatement:
+                    // too much work
+                    return false;
+                case Java8Parser.RULE_synchronizedStatement:
+                    // 'synchronized' '(' expression ')' block
+                case Java8Parser.RULE_tryStatement:
+                    // 'try' block catches | 'try' block catches? finally_ | tryWithResourcesStatement
+                    subCtx = ctx.getChild(Java8Parser.BlockContext.class, 0);
+                    continue;
+                default:
+                    return false;
+            }
+        }
+        return false;
+    }
 
     /*
     switchLabels
         :   switchLabel switchLabel*
         ;
     @Override public void enterSwitchLabels( Java8Parser.SwitchLabelsContext ctx ) {}
-    @Override public void exitSwitchLabels( Java8Parser.SwitchLabelsContext ctx ) {}
     */
+    @Override public void exitSwitchLabels( Java8Parser.SwitchLabelsContext ctx )
+    {
+        groupConsecutiveSwitchLabels(ctx.switchLabel());
+    }
+
+    private void groupConsecutiveSwitchLabels( List<Java8Parser.SwitchLabelContext> switchLabels )
+    {
+        if (switchLabels.size() < 2)
+            return;
+        // Ensure consecutive switch labels are joined by comma instead of :\n\s+case
+        int index = 0, indexLast = switchLabels.size();
+        TerminalNode colonNode = null;
+        for (Java8Parser.SwitchLabelContext switchLabel : switchLabels)
+        {
+            if (1 == ++index)
+            {
+                colonNode = switchLabel.getToken(Java8Parser.COLON, 0);
+                continue;
+            }
+            if (switchLabel.getChildCount() == 2) // ==> default
+            {
+                Token token = rewriter.getTokenPreceding(switchLabel.start);
+                String indent = null != token && token.getType() == Java8Parser.WS ? token.getText() : "";
+                rewriter.insertAfter(colonNode, rewriter.lineBreak + indent + rewriter.singleIndent + "fallthrough");
+            }
+            else
+            {
+                rewriter.replace(colonNode, ",");
+                colonNode = switchLabel.getToken(Java8Parser.COLON, 0);
+                rewriter.replace(switchLabel.getToken(Java8Parser.CASE, 0), "    ");
+            }
+        }
+    }
 
     /*
     switchLabel

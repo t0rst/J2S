@@ -143,6 +143,24 @@ public class J2SRewriter extends ParseTreeRewriter {
         return singleIndent;
     }
 
+    // tokens
+
+    public Token getTokenFollowing(Token token)
+    {
+        int index = null != token ? token.getTokenIndex() + 1 : tokens.size();
+        if (index < tokens.size())
+            return tokens.get(index);
+        return null;
+    }
+
+    public Token getTokenPreceding(Token token)
+    {
+        int index = null != token ? token.getTokenIndex() - 1 : -1;
+        if (index >= 0)
+            return tokens.get(index);
+        return null;
+    }
+
     public void deleteAndAdjustWhitespace(Token token)
     {
         int i = token.getTokenIndex();
