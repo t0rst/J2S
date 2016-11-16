@@ -221,6 +221,152 @@ class J2SConverter extends Java8BaseListener {
     // that class member function list only contains salient functions.
     //
 
+    /*  General members from interface ParseTreeListener
+	@Override public void visitErrorNode(ErrorNode node) {}
+    @Override public void enterEveryRule(ParserRuleContext ctx) {}
+    @Override public void exitEveryRule(ParserRuleContext ctx) {}
+    */
+    @Override public void visitTerminal(TerminalNode node)
+    {
+        // Some tokens have simple transforms wherever they appear, so are easier to deal with here.
+        // (...added after many simple tokens dealt with elsewhere.)
+        Token token = node.getSymbol();
+        int tokenType = token.getType();
+        switch (tokenType)
+        {
+        //  case Java8Parser.ABSTRACT:
+        //  case Java8Parser.ASSERT:
+        //  case Java8Parser.BOOLEAN:
+        //  case Java8Parser.BREAK:
+        //  case Java8Parser.BYTE:
+        //  case Java8Parser.CASE:
+        //  case Java8Parser.CATCH:
+        //  case Java8Parser.CHAR:
+        //  case Java8Parser.CLASS:
+        //  case Java8Parser.CONST:
+        //  case Java8Parser.CONTINUE:
+        //  case Java8Parser.DEFAULT:
+        //  case Java8Parser.DO:
+        //  case Java8Parser.DOUBLE:
+        //  case Java8Parser.ELSE:
+        //  case Java8Parser.ENUM:
+        //  case Java8Parser.EXTENDS:
+        //  case Java8Parser.FINAL:
+        //  case Java8Parser.FINALLY:
+        //  case Java8Parser.FLOAT:
+        //  case Java8Parser.FOR:
+        //  case Java8Parser.IF:
+        //  case Java8Parser.GOTO:
+        //  case Java8Parser.IMPLEMENTS:
+        //  case Java8Parser.IMPORT:
+        //  case Java8Parser.INSTANCEOF:
+        //  case Java8Parser.INT:
+        //  case Java8Parser.INTERFACE:
+        //  case Java8Parser.LONG:
+        //  case Java8Parser.NATIVE:
+        //  case Java8Parser.NEW:
+        //  case Java8Parser.PACKAGE:
+        //  case Java8Parser.PRIVATE:
+        //  case Java8Parser.PROTECTED:
+        //  case Java8Parser.PUBLIC:
+        //  case Java8Parser.RETURN:
+        //  case Java8Parser.SHORT:
+        //  case Java8Parser.STATIC:
+        //  case Java8Parser.STRICTFP:
+        //  case Java8Parser.SUPER:
+        //  case Java8Parser.SWITCH:
+        //  case Java8Parser.SYNCHRONIZED:
+        //  case Java8Parser.THIS:
+        //  case Java8Parser.THROW:
+        //  case Java8Parser.THROWS:
+        //  case Java8Parser.TRANSIENT:
+        //  case Java8Parser.TRY:
+        //  case Java8Parser.VOID:
+        //  case Java8Parser.VOLATILE:
+        //  case Java8Parser.WHILE:
+        //  case Java8Parser.IntegerLiteral:
+        //  case Java8Parser.FloatingPointLiteral:
+        //  case Java8Parser.BooleanLiteral:
+        //  case Java8Parser.CharacterLiteral:
+        //  case Java8Parser.StringLiteral:
+        //  case Java8Parser.NullLiteral:
+        //  case Java8Parser.LPAREN:
+        //  case Java8Parser.RPAREN:
+        //  case Java8Parser.LBRACE:
+        //  case Java8Parser.RBRACE:
+        //  case Java8Parser.LBRACK:
+        //  case Java8Parser.RBRACK:
+            case Java8Parser.SEMI:
+                // Switch allows elimination of semicolons if they aren't serving the purpose of separating statements
+                // (and is preferred Swift style)
+                scan: for (Token t = rewriter.getTokenFollowing(token); null != t; t = rewriter.getTokenFollowing(t))
+                {
+                    switch (t.getType())
+                    {
+                        case Java8Parser.WS:
+                        case Java8Parser.COMMENT:
+                            continue; // keep scanning
+                        case Java8Parser.LB: // end of line, no following statement
+                        case Java8Parser.LINE_COMMENT: // comment continues to line end, implying no following statement
+                        case Java8Parser.RBRACE: // end of block scope, no following statement
+                            rewriter.delete(token);
+                            break scan;
+                        default:
+                            break scan;
+                    }
+                }
+                break;
+        //  case Java8Parser.COMMA:
+        //  case Java8Parser.DOT:
+        //  case Java8Parser.ASSIGN:
+        //  case Java8Parser.GT:
+        //  case Java8Parser.LT:
+        //  case Java8Parser.BANG:
+        //  case Java8Parser.TILDE:
+        //  case Java8Parser.QUESTION:
+        //  case Java8Parser.COLON:
+        //  case Java8Parser.EQUAL:
+        //  case Java8Parser.LE:
+        //  case Java8Parser.GE:
+        //  case Java8Parser.NOTEQUAL:
+        //  case Java8Parser.AND:
+        //  case Java8Parser.OR:
+        //  case Java8Parser.INC:
+        //  case Java8Parser.DEC:
+        //  case Java8Parser.ADD:
+        //  case Java8Parser.SUB:
+        //  case Java8Parser.MUL:
+        //  case Java8Parser.DIV:
+        //  case Java8Parser.BITAND:
+        //  case Java8Parser.BITOR:
+        //  case Java8Parser.CARET:
+        //  case Java8Parser.MOD:
+        //  case Java8Parser.ARROW:
+        //  case Java8Parser.COLONCOLON:
+        //  case Java8Parser.ADD_ASSIGN:
+        //  case Java8Parser.SUB_ASSIGN:
+        //  case Java8Parser.MUL_ASSIGN:
+        //  case Java8Parser.DIV_ASSIGN:
+        //  case Java8Parser.AND_ASSIGN:
+        //  case Java8Parser.OR_ASSIGN:
+        //  case Java8Parser.XOR_ASSIGN:
+        //  case Java8Parser.MOD_ASSIGN:
+        //  case Java8Parser.LSHIFT_ASSIGN:
+        //  case Java8Parser.RSHIFT_ASSIGN:
+        //  case Java8Parser.URSHIFT_ASSIGN:
+        //  case Java8Parser.Identifier:
+        //  case Java8Parser.AT:
+        //  case Java8Parser.ELLIPSIS:
+        //  case Java8Parser.LB:
+        //  case Java8Parser.WS:
+        //  case Java8Parser.COMMENT:
+        //  case Java8Parser.LINE_COMMENT:
+            default:
+                break;
+        }
+    }
+
+
     // ---------------------------------------------------------------------------------------------
     // Lexical Structure (§3)
 
