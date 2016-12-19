@@ -126,7 +126,8 @@ class J2SConverter extends Java8BaseListener {
                 "HashMap",  "Dictionary",
                 "Set",      "Set",
                 "HashSet",  "Set",
-                "Vector",   "Array", // to do: need to (be able to) warn ensure sync access with vars of this type
+            //  "Vector",   "Array",
+            //  to do: need to add warning where mapping vector to array to ensure sync access with vars of this type
 
                 "",""
         );
@@ -166,6 +167,15 @@ class J2SConverter extends Java8BaseListener {
                 rewriter.replace(modifierToken, stringInSwift);
         }
     }
+
+/*
+    private void mapAnnotationContext(ParserRuleContext ctx)
+    {
+    }
+    @SuppressWarnings("unused")
+    @SuppressLint("DefaultLocale")
+
+*/
 
     private void mapInitialModifiersInContext(ParserRuleContext ctx)
     {
@@ -321,7 +331,7 @@ class J2SConverter extends Java8BaseListener {
         //  case Java8Parser.RBRACK:
             case Java8Parser.SEMI:
                 // Switch allows elimination of semicolons if they aren't serving the purpose of separating statements
-                // (and is preferred Swift style)
+                // (and is preferred Swift style). (Problem if a later reorganisation inserts a statement after semicolon)
                 scan: for (Token t = rewriter.getTokenFollowing(token); null != t; t = rewriter.getTokenFollowing(t))
                 {
                     switch (t.getType())
@@ -1200,8 +1210,10 @@ class J2SConverter extends Java8BaseListener {
                 break;
             case Java8Parser.RULE_formalParameter:
             case Java8Parser.RULE_lastFormalParameter:
-        //  case Java8Parser.RULE_catchFormalParameter:
                 constness = Constness.implicit;
+                break;
+            case Java8Parser.RULE_catchFormalParameter:
+                constness = Constness.explicit;
                 break;
             case Java8Parser.RULE_enhancedForStatement:
             case Java8Parser.RULE_enhancedForStatementNoShortIf:
@@ -1252,11 +1264,16 @@ class J2SConverter extends Java8BaseListener {
         // Move trailing dimensions to wrap the type. First any dimensions binding to the declarator id and
         // then any dimensions binding to the right of the type.
         // a) start by finding the type context that will be wrapped.
-        Java8Parser.UnannTypeContext unannTypeCtx = declarationCtx.getChild(Java8Parser.UnannTypeContext.class, 0);
+        Java8Parser.UnannTypeContext unannTypeCtx = null;
         Java8Parser.UnannReferenceTypeContext unannReferenceTypeCtx = null;
         Java8Parser.UnannArrayTypeContext unannArrayTypeCtx = null;
         Java8Parser.DimsContext outerDimsCtx = null;
-        ParserRuleContext typeCtx = unannTypeCtx;
+        ParserRuleContext typeCtx = null;
+        if (declarationRuleIndex == Java8Parser.RULE_catchFormalParameter)
+            typeCtx = declarationCtx.getChild(Java8Parser.CatchTypeContext.class, 0);
+        else
+            typeCtx = unannTypeCtx = declarationCtx.getChild(Java8Parser.UnannTypeContext.class, 0);
+        if (null != unannTypeCtx)
         if (null != (unannReferenceTypeCtx = unannTypeCtx.unannReferenceType())
          && null != (unannArrayTypeCtx = unannReferenceTypeCtx.unannArrayType()))
         {
@@ -1341,6 +1358,9 @@ class J2SConverter extends Java8BaseListener {
              || declarationRuleIndex == Java8Parser.RULE_enhancedForStatementNoShortIf)
                 varInitCtx = declarationCtx.getRuleContext(Java8Parser.ExpressionContext.class, 0);
 
+            if (declarationRuleIndex == Java8Parser.RULE_catchFormalParameter)
+                rewriter.insertAfter(varIdCtx, " as "+unannTypeText);
+            else
             if (!isVariableTypeCompletelyImpliedByInitializer( unannTypeCtx, varInitCtx, enhancedFor ))
                 rewriter.insertAfter(varIdCtx, ": "+unannTypeText+(isOptional?"?":""));
 
@@ -1350,16 +1370,18 @@ class J2SConverter extends Java8BaseListener {
                 rewriter.insertBefore(varIdCtx, "_ ");
         }
 
-        // Finally replace unannType with let/var/-
+        // Finally replace the complete type context with let/var/-
         // in an enhancedForStatement, the loop var is implicitly const, but can be made variable with var if it is
         // to be modified inside the loop; we could check for this, but its a rare scenario, and a lot of work, so no.
+        if (null != unannTypeCtx)
+            typeCtx = unannTypeCtx;
         switch (constness)
         {
-            case explicit:  rewriter.replace(unannTypeCtx, "let");      break;
-            case implicit:  rewriter.deleteAndAdjustWhitespace(unannTypeCtx);  break;
-            case variable:  rewriter.replace(unannTypeCtx, "var");      break;
+            case explicit:  rewriter.replace(typeCtx, "let");      break;
+            case implicit:  rewriter.deleteAndAdjustWhitespace(typeCtx);  break;
+            case variable:  rewriter.replace(typeCtx, "var");      break;
             // if still unknown, then assume variable...
-            default:        rewriter.replace(unannTypeCtx, "var");      break;
+            default:        rewriter.replace(typeCtx, "var");      break;
         }
     }
 
@@ -2805,8 +2827,11 @@ class J2SConverter extends Java8BaseListener {
         :   'catch' '(' catchFormalParameter ')' block
         ;
     @Override public void enterCatchClause( Java8Parser.CatchClauseContext ctx ) {}
-    @Override public void exitCatchClause( Java8Parser.CatchClauseContext ctx ) {}
     */
+    @Override public void exitCatchClause( Java8Parser.CatchClauseContext ctx )
+    {
+        removeParenthesesAroundExpression(ctx);
+    }
 
     /*
     catchFormalParameter

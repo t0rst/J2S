@@ -18,7 +18,7 @@ javac -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:." -d out/prod
 src_file=path-to-your-source-file
 dst_file="${src_file%\.*}.swift"
 cd directory-containing-this
-J2S="$(pwd)out/production/J2S"
+J2S="$(pwd)/out/production/J2S"
 java -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:${J2S}:." J2S "${src_file}" > "${dst_file}"
 
 
@@ -31,8 +31,8 @@ java -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:${J2S}:." J2S "
 :Replace with:
 $2/*
 $1
-$2@Override public void enter\u$3$4(Java8Parser.\u$3$4Context ctx) {}
-$2@Override public void exit\u$3$4(Java8Parser.\u$3$4Context ctx) {}
+$2@Override public void enter\u$3$4( Java8Parser.\u$3$4Context ctx ) { }
+$2@Override public void exit\u$3$4( Java8Parser.\u$3$4Context ctx ) { }
 $2*/
 
 # Regex to create visitor stubs from grammar (substitute your visitor return type for T)
@@ -41,5 +41,5 @@ $2*/
 :Replace with:
 $2/*
 $1
-$2@Override public T visit\u$3$4(Java8Parser.\u$3$4Context ctx) { return visitChildren(ctx); }
+$2@Override public T visit\u$3$4( Java8Parser.\u$3$4Context ctx ) { return visitChildren(ctx); }
 $2*/

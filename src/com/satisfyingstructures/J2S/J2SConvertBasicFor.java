@@ -326,7 +326,7 @@ public class J2SConvertBasicFor {
             if (null != forUpdateText)
             {
                 if (needInnerScope)
-                    afterBrace = " "+forUpdateText+"; } "+afterBrace;
+                    afterBrace = "; "+forUpdateText+"; } "+afterBrace;
                 else
                     beforeBrace += " "+forUpdateText+"; ";
             }
