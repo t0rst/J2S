@@ -79,7 +79,7 @@ public class J2S
         String s = "J2S:\n";
         if (null != whoops)
             s = "Oops: "+whoops+"\n";
-        s += "J2S: a tool to do ~80% of the work in converting Java 8 to Swift 3\n"
+        s += "J2S: a tool to do much of the work in converting Java 8 syntax to Swift 3\n"
             +"Usage:\n"
             +"J2S [-i path] [-o path] [-w path] [-a path] [-f] [-Dkey=value | -Dkey]* [path]\n\n"
             +"    -i input-file-path\n"
@@ -87,20 +87,20 @@ public class J2S
             +"    -o output-file-path\n"
             +"        enclosing directory must exist; if this option not used, then send output to stdout\n\n"
             +"    -f\n"
-            +"        force overwrite of existing file\n\n"
+            +"        force overwrite of existing file (default is not to overwrite)\n\n"
             +"    -w working-directory\n"
             +"        input and output paths subsequent to this argument, can be specified relative to this\n"
-            +"        existing directory\n\n"
+            +"        preexisting directory\n\n"
             +"    -a arguments-file-path\n"
             +"        insert arguments from this file into the argument list as if inserted at this position on\n"
-            +"        the commandline; one argument per line; lines are whitespace trimmed; empty or hash-prefixed\n"
-            +"        lines are ignored;\n\n"
+            +"        the commandline; one argument per line; lines are whitespace trimmed; empty lines are\n"
+            +"        ignored; hash-prefix to line-end is ignored\n\n"
             +"    -Dkey[=value]\n"
             +"        define a value for a key that the converter will use; absent value ==> value=1\n"
             +"    -Mtype=replacement\n"
             +"        map 'type' to 'replacement' in generated Swift output\n"
             +"    -h | -help\n"
-            +"        show this usage help\n\n";
+            +"        show this help\n\n";
         System.err.println(s);
         return 1;
     }
