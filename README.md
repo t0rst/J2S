@@ -27,7 +27,15 @@ You need:
 
 
 ### Build
-You can build this project with the [IntelliJ](https://www.jetbrains.com/idea/#chooseYourEdition) IDE (Community or Ultimate) but not Android Studio (project file incompatibilities); or other Java dev IDEs. If you use IntelliJ, there is a useful ANTLR v4 plugin available via Preferences > Plugins.
+You can build this project with the [IntelliJ](https://www.jetbrains.com/idea/#chooseYourEdition) IDE (Community or Ultimate) but not Android Studio (project file incompatibilities); or other Java dev IDEs.
+
+If you use IntelliJ, then when you open the J2S project
+
+1.  Go to File > Project Structure > Libraries, click on `+`, choose java library, and paste in the path to the antlr jar from the CLASSPATH in `$ cat $(which antlr4)` (dont include trailing `:.`) if you installed with homebrew, otherwise where you installed it. Then check that you can build J2S.
+
+1.  (optional) To run from within IntelliJ, go to Run > Edit Configurations…, click on plus, select an Application configuration, set Main class to com.satisfyingstructures.J2S.J2S and add `-a path-to-your-arguments-file` (described in [use](#use) below) through which you can specify input, output and options.
+
+1.  (optional) There also is a useful ANTLR v4 plugin available to download via Preferences > Plugins.
 
 Or you can build from the command line:
 
