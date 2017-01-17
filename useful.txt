@@ -12,14 +12,14 @@ antlr4 -o src -Dlanguage=Java -listener -visitor Java8.g4
 # build the source without an IDE
 cd directory-containing-this
 mkdir out/production/J2S
-javac -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:." -d out/production/J2S src/*.java
+javac -cp "/usr/local/Cellar/antlr/4.6/antlr-4.6-complete.jar:." -d out/production/J2S src/*.java
 
 # use the binaries to convert a java file
 src_file=path-to-your-source-file
 dst_file="${src_file%\.*}.swift"
 cd directory-containing-this
 J2S="$(pwd)/out/production/J2S"
-java -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:${J2S}:." J2S "${src_file}" > "${dst_file}"
+java -cp "/usr/local/Cellar/antlr/4.6/antlr-4.6-complete.jar:${J2S}:." J2S "${src_file}" > "${dst_file}"
 
 
 

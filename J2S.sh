@@ -4,7 +4,7 @@ cmd_path="$(dirname "$cmd_full")"
 cmd_name="$(basename "$cmd_full")"
 cmd_stem="${cmd_name%\.*}"
 
-CP_ANTLR="/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar"
+CP_ANTLR="/usr/local/Cellar/antlr/4.6/antlr-4.6-complete.jar"
 CP_J2S="${cmd_path}/out/production/J2S"
 
 if [[ ! -f "${CP_J2S}/com/satisfyingstructures/J2S/J2S.class" ]]; then

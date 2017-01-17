@@ -1,4 +1,4 @@
-// Generated from Java8.g4 by ANTLR 4.5.3
+// Generated from Java8.g4 by ANTLR 4.6
 package com.satisfyingstructures.J2S.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

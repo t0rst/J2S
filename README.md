@@ -22,7 +22,7 @@ You need:
 
 -   Java SE 8 ([download](http://www.oracle.com/technetwork/java/javase/downloads/index.html))
 
--   [ANTLR](https://github.com/antlr/antlr4/blob/master/README.md) 4.5 (Easiest using [homebrew](http://brew.sh)... `$ brew update ; brew install antlr`)
+-   [ANTLR](https://github.com/antlr/antlr4/blob/master/README.md) 4.6 (Easiest using [homebrew](http://brew.sh)... `$ brew update ; brew install antlr` or `$ brew upgrade antlr`)
 
 
 
@@ -52,9 +52,10 @@ Or you can build from the command line:
     cd directory-containing-this
     mkdir -p out/production/J2S/com/satisfyingstructures/J2S/antlr
     javac \
-        -cp "/usr/local/Cellar/antlr/4.5.3/antlr-4.5.3-complete.jar:." \
-        -d out/production/J2S src/com/satisfyingstructures/J2S/*.java \
-        -d out/production/J2S src/com/satisfyingstructures/J2S/antlr/*.java
+        -cp "/usr/local/Cellar/antlr/4.6/antlr-4.6-complete.jar:." \
+        -d out/production/J2S \
+        src/com/satisfyingstructures/J2S/*.java \
+        src/com/satisfyingstructures/J2S/antlr/*.java
     ```
 
 

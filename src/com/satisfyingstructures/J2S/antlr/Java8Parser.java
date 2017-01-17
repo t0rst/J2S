@@ -1,4 +1,4 @@
-// Generated from Java8.g4 by ANTLR 4.5.3
+// Generated from Java8.g4 by ANTLR 4.6
 package com.satisfyingstructures.J2S.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class Java8Parser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.6", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -310,7 +310,10 @@ public class Java8Parser extends Parser {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -509,6 +512,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 6, RULE_numericType);
 		try {
 			setState(498);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BYTE:
 			case CHAR:
@@ -575,7 +579,10 @@ public class Java8Parser extends Parser {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BYTE) | (1L << CHAR) | (1L << INT) | (1L << LONG) | (1L << SHORT))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -622,7 +629,10 @@ public class Java8Parser extends Parser {
 			_la = _input.LA(1);
 			if ( !(_la==DOUBLE || _la==FLOAT) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -871,6 +881,7 @@ public class Java8Parser extends Parser {
 				setState(526);
 				match(Identifier);
 				setState(528);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -905,6 +916,7 @@ public class Java8Parser extends Parser {
 				setState(538);
 				match(Identifier);
 				setState(540);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -1507,6 +1519,7 @@ public class Java8Parser extends Parser {
 			setState(617);
 			match(Identifier);
 			setState(619);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EXTENDS) {
 				{
@@ -1928,6 +1941,7 @@ public class Java8Parser extends Parser {
 			setState(660);
 			match(QUESTION);
 			setState(662);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EXTENDS || _la==SUPER) {
 				{
@@ -1977,6 +1991,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 50, RULE_wildcardBounds);
 		try {
 			setState(668);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case EXTENDS:
 				enterOuterAlt(_localctx, 1);
@@ -3127,6 +3142,7 @@ public class Java8Parser extends Parser {
 			setState(801);
 			match(Identifier);
 			setState(803);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -3136,6 +3152,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(806);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EXTENDS) {
 				{
@@ -3145,6 +3162,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(809);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==IMPLEMENTS) {
 				{
@@ -3196,6 +3214,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 86, RULE_classModifier);
 		try {
 			setState(821);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -3867,6 +3886,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 106, RULE_fieldModifier);
 		try {
 			setState(889);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -4039,6 +4059,7 @@ public class Java8Parser extends Parser {
 			setState(899);
 			variableDeclaratorId();
 			setState(902);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ASSIGN) {
 				{
@@ -4096,6 +4117,7 @@ public class Java8Parser extends Parser {
 			setState(904);
 			match(Identifier);
 			setState(906);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LBRACK || _la==AT) {
 				{
@@ -4148,6 +4170,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 114, RULE_variableInitializer);
 		try {
 			setState(910);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
 			case BYTE:
@@ -4292,6 +4315,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 118, RULE_unannPrimitiveType);
 		try {
 			setState(918);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BYTE:
 			case CHAR:
@@ -4547,6 +4571,7 @@ public class Java8Parser extends Parser {
 				setState(936);
 				match(Identifier);
 				setState(938);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -4581,6 +4606,7 @@ public class Java8Parser extends Parser {
 				setState(948);
 				match(Identifier);
 				setState(950);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -4660,6 +4686,7 @@ public class Java8Parser extends Parser {
 			setState(961);
 			match(Identifier);
 			setState(963);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -4715,6 +4742,7 @@ public class Java8Parser extends Parser {
 			setState(965);
 			match(Identifier);
 			setState(967);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -5087,6 +5115,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 142, RULE_methodModifier);
 		try {
 			setState(1007);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -5217,6 +5246,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(1026);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
 			case BYTE:
@@ -5235,6 +5265,7 @@ public class Java8Parser extends Parser {
 				setState(1010);
 				methodDeclarator();
 				setState(1012);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==THROWS) {
 					{
@@ -5269,6 +5300,7 @@ public class Java8Parser extends Parser {
 				setState(1022);
 				methodDeclarator();
 				setState(1024);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==THROWS) {
 					{
@@ -5322,6 +5354,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 146, RULE_result);
 		try {
 			setState(1030);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
 			case BYTE:
@@ -5399,6 +5432,7 @@ public class Java8Parser extends Parser {
 			setState(1033);
 			match(LPAREN);
 			setState(1035);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FINAL) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << SHORT))) != 0) || _la==Identifier || _la==AT) {
 				{
@@ -5410,6 +5444,7 @@ public class Java8Parser extends Parser {
 			setState(1037);
 			match(RPAREN);
 			setState(1039);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LBRACK || _la==AT) {
 				{
@@ -5693,6 +5728,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 156, RULE_variableModifier);
 		try {
 			setState(1077);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -5885,6 +5921,7 @@ public class Java8Parser extends Parser {
 			setState(1104);
 			unannType();
 			setState(1107);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Identifier) {
 				{
@@ -6108,6 +6145,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 168, RULE_methodBody);
 		try {
 			setState(1128);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LBRACE:
 				enterOuterAlt(_localctx, 1);
@@ -6287,6 +6325,7 @@ public class Java8Parser extends Parser {
 			setState(1141);
 			constructorDeclarator();
 			setState(1143);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==THROWS) {
 				{
@@ -6338,6 +6377,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 176, RULE_constructorModifier);
 		try {
 			setState(1151);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -6419,6 +6459,7 @@ public class Java8Parser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(1154);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -6432,6 +6473,7 @@ public class Java8Parser extends Parser {
 			setState(1157);
 			match(LPAREN);
 			setState(1159);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FINAL) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << SHORT))) != 0) || _la==Identifier || _la==AT) {
 				{
@@ -6543,6 +6585,7 @@ public class Java8Parser extends Parser {
 				break;
 			}
 			setState(1170);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ABSTRACT) | (1L << ASSERT) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << CLASS) | (1L << CONTINUE) | (1L << DO) | (1L << DOUBLE) | (1L << ENUM) | (1L << FINAL) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRIVATE) | (1L << PROTECTED) | (1L << PUBLIC) | (1L << RETURN) | (1L << SHORT) | (1L << STATIC) | (1L << STRICTFP) | (1L << SUPER) | (1L << SWITCH) | (1L << SYNCHRONIZED) | (1L << THIS) | (1L << THROW) | (1L << TRY) | (1L << VOID) | (1L << WHILE) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN) | (1L << LBRACE) | (1L << SEMI))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -6610,6 +6653,7 @@ public class Java8Parser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(1175);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -6623,6 +6667,7 @@ public class Java8Parser extends Parser {
 				setState(1178);
 				match(LPAREN);
 				setState(1180);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -6641,6 +6686,7 @@ public class Java8Parser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(1185);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -6654,6 +6700,7 @@ public class Java8Parser extends Parser {
 				setState(1188);
 				match(LPAREN);
 				setState(1190);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -6676,6 +6723,7 @@ public class Java8Parser extends Parser {
 				setState(1195);
 				match(DOT);
 				setState(1197);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -6689,6 +6737,7 @@ public class Java8Parser extends Parser {
 				setState(1200);
 				match(LPAREN);
 				setState(1202);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -6711,6 +6760,7 @@ public class Java8Parser extends Parser {
 				setState(1208);
 				match(DOT);
 				setState(1210);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -6724,6 +6774,7 @@ public class Java8Parser extends Parser {
 				setState(1213);
 				match(LPAREN);
 				setState(1215);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -6810,6 +6861,7 @@ public class Java8Parser extends Parser {
 			setState(1229);
 			match(Identifier);
 			setState(1231);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==IMPLEMENTS) {
 				{
@@ -6869,6 +6921,7 @@ public class Java8Parser extends Parser {
 			setState(1235);
 			match(LBRACE);
 			setState(1237);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Identifier || _la==AT) {
 				{
@@ -6878,6 +6931,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1240);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==COMMA) {
 				{
@@ -6887,6 +6941,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1243);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMI) {
 				{
@@ -7033,12 +7088,14 @@ public class Java8Parser extends Parser {
 			setState(1261);
 			match(Identifier);
 			setState(1267);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LPAREN) {
 				{
 				setState(1262);
 				match(LPAREN);
 				setState(1264);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -7053,6 +7110,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1270);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LBRACE) {
 				{
@@ -7302,6 +7360,7 @@ public class Java8Parser extends Parser {
 			setState(1292);
 			match(Identifier);
 			setState(1294);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -7311,6 +7370,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1297);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EXTENDS) {
 				{
@@ -7362,6 +7422,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 202, RULE_interfaceModifier);
 		try {
 			setState(1308);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -7724,6 +7785,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 212, RULE_constantModifier);
 		try {
 			setState(1343);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -7866,6 +7928,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 216, RULE_interfaceMethodModifier);
 		try {
 			setState(1360);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -8215,6 +8278,7 @@ public class Java8Parser extends Parser {
 			setState(1398);
 			match(RPAREN);
 			setState(1400);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LBRACK || _la==AT) {
 				{
@@ -8224,6 +8288,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1403);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==DEFAULT) {
 				{
@@ -8275,6 +8340,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 226, RULE_annotationTypeElementModifier);
 		try {
 			setState(1410);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case AT:
 				enterOuterAlt(_localctx, 1);
@@ -8468,6 +8534,7 @@ public class Java8Parser extends Parser {
 			setState(1422);
 			match(LPAREN);
 			setState(1424);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Identifier) {
 				{
@@ -8707,6 +8774,7 @@ public class Java8Parser extends Parser {
 			setState(1445);
 			match(LBRACE);
 			setState(1447);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN) | (1L << LBRACE))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -8716,6 +8784,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1450);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==COMMA) {
 				{
@@ -8939,6 +9008,7 @@ public class Java8Parser extends Parser {
 			setState(1471);
 			match(LBRACE);
 			setState(1473);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN) | (1L << LBRACE))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -8948,6 +9018,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1476);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==COMMA) {
 				{
@@ -9070,6 +9141,7 @@ public class Java8Parser extends Parser {
 			setState(1488);
 			match(LBRACE);
 			setState(1490);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ABSTRACT) | (1L << ASSERT) | (1L << BOOLEAN) | (1L << BREAK) | (1L << BYTE) | (1L << CHAR) | (1L << CLASS) | (1L << CONTINUE) | (1L << DO) | (1L << DOUBLE) | (1L << ENUM) | (1L << FINAL) | (1L << FLOAT) | (1L << FOR) | (1L << IF) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << PRIVATE) | (1L << PROTECTED) | (1L << PUBLIC) | (1L << RETURN) | (1L << SHORT) | (1L << STATIC) | (1L << STRICTFP) | (1L << SUPER) | (1L << SWITCH) | (1L << SYNCHRONIZED) | (1L << THIS) | (1L << THROW) | (1L << TRY) | (1L << VOID) | (1L << WHILE) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN) | (1L << LBRACE) | (1L << SEMI))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -9592,6 +9664,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 266, RULE_statementWithoutTrailingSubstatement);
 		try {
 			setState(1545);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LBRACE:
 				enterOuterAlt(_localctx, 1);
@@ -10965,6 +11038,7 @@ public class Java8Parser extends Parser {
 			setState(1677);
 			match(LPAREN);
 			setState(1679);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FINAL) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -10976,6 +11050,7 @@ public class Java8Parser extends Parser {
 			setState(1681);
 			match(SEMI);
 			setState(1683);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -10987,6 +11062,7 @@ public class Java8Parser extends Parser {
 			setState(1685);
 			match(SEMI);
 			setState(1687);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -11056,6 +11132,7 @@ public class Java8Parser extends Parser {
 			setState(1693);
 			match(LPAREN);
 			setState(1695);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FINAL) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -11067,6 +11144,7 @@ public class Java8Parser extends Parser {
 			setState(1697);
 			match(SEMI);
 			setState(1699);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -11078,6 +11156,7 @@ public class Java8Parser extends Parser {
 			setState(1701);
 			match(SEMI);
 			setState(1703);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & ((1L << (INC - 79)) | (1L << (DEC - 79)) | (1L << (Identifier - 79)) | (1L << (AT - 79)))) != 0)) {
 				{
@@ -11478,6 +11557,7 @@ public class Java8Parser extends Parser {
 			setState(1752);
 			match(BREAK);
 			setState(1754);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Identifier) {
 				{
@@ -11532,6 +11612,7 @@ public class Java8Parser extends Parser {
 			setState(1758);
 			match(CONTINUE);
 			setState(1760);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==Identifier) {
 				{
@@ -11588,6 +11669,7 @@ public class Java8Parser extends Parser {
 			setState(1764);
 			match(RETURN);
 			setState(1766);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -11773,6 +11855,7 @@ public class Java8Parser extends Parser {
 				setState(1785);
 				block();
 				setState(1787);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==CATCH) {
 					{
@@ -12151,6 +12234,7 @@ public class Java8Parser extends Parser {
 			setState(1829);
 			block();
 			setState(1831);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==CATCH) {
 				{
@@ -12160,6 +12244,7 @@ public class Java8Parser extends Parser {
 			}
 
 			setState(1834);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==FINALLY) {
 				{
@@ -12216,6 +12301,7 @@ public class Java8Parser extends Parser {
 			setState(1837);
 			resourceList();
 			setState(1839);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==SEMI) {
 				{
@@ -13551,6 +13637,7 @@ public class Java8Parser extends Parser {
 				setState(2035);
 				match(NEW);
 				setState(2037);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13606,6 +13693,7 @@ public class Java8Parser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(2060);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13617,6 +13705,7 @@ public class Java8Parser extends Parser {
 				setState(2062);
 				match(LPAREN);
 				setState(2064);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -13628,6 +13717,7 @@ public class Java8Parser extends Parser {
 				setState(2066);
 				match(RPAREN);
 				setState(2068);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LBRACE) {
 					{
@@ -13648,6 +13738,7 @@ public class Java8Parser extends Parser {
 				setState(2072);
 				match(NEW);
 				setState(2074);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13673,6 +13764,7 @@ public class Java8Parser extends Parser {
 				setState(2082);
 				match(Identifier);
 				setState(2084);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13684,6 +13776,7 @@ public class Java8Parser extends Parser {
 				setState(2086);
 				match(LPAREN);
 				setState(2088);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -13695,6 +13788,7 @@ public class Java8Parser extends Parser {
 				setState(2090);
 				match(RPAREN);
 				setState(2092);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LBRACE) {
 					{
@@ -13715,6 +13809,7 @@ public class Java8Parser extends Parser {
 				setState(2096);
 				match(NEW);
 				setState(2098);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13740,6 +13835,7 @@ public class Java8Parser extends Parser {
 				setState(2106);
 				match(Identifier);
 				setState(2108);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -13751,6 +13847,7 @@ public class Java8Parser extends Parser {
 				setState(2110);
 				match(LPAREN);
 				setState(2112);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -13762,6 +13859,7 @@ public class Java8Parser extends Parser {
 				setState(2114);
 				match(RPAREN);
 				setState(2116);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LBRACE) {
 					{
@@ -13836,6 +13934,7 @@ public class Java8Parser extends Parser {
 			setState(2121);
 			match(NEW);
 			setState(2123);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -13861,6 +13960,7 @@ public class Java8Parser extends Parser {
 			setState(2131);
 			match(Identifier);
 			setState(2133);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -13872,6 +13972,7 @@ public class Java8Parser extends Parser {
 			setState(2135);
 			match(LPAREN);
 			setState(2137);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -13956,6 +14057,7 @@ public class Java8Parser extends Parser {
 		int _la;
 		try {
 			setState(2202);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NEW:
 				enterOuterAlt(_localctx, 1);
@@ -13963,6 +14065,7 @@ public class Java8Parser extends Parser {
 				setState(2143);
 				match(NEW);
 				setState(2145);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14018,6 +14121,7 @@ public class Java8Parser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(2168);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14029,6 +14133,7 @@ public class Java8Parser extends Parser {
 				setState(2170);
 				match(LPAREN);
 				setState(2172);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14061,6 +14166,7 @@ public class Java8Parser extends Parser {
 				setState(2180);
 				match(NEW);
 				setState(2182);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14086,6 +14192,7 @@ public class Java8Parser extends Parser {
 				setState(2190);
 				match(Identifier);
 				setState(2192);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14097,6 +14204,7 @@ public class Java8Parser extends Parser {
 				setState(2194);
 				match(LPAREN);
 				setState(2196);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14350,6 +14458,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 384, RULE_fieldAccess_lfno_primary);
 		try {
 			setState(2236);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case SUPER:
 				enterOuterAlt(_localctx, 1);
@@ -14748,6 +14857,7 @@ public class Java8Parser extends Parser {
 				setState(2298);
 				match(LPAREN);
 				setState(2300);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14768,6 +14878,7 @@ public class Java8Parser extends Parser {
 				setState(2305);
 				match(DOT);
 				setState(2307);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14781,6 +14892,7 @@ public class Java8Parser extends Parser {
 				setState(2310);
 				match(LPAREN);
 				setState(2312);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14801,6 +14913,7 @@ public class Java8Parser extends Parser {
 				setState(2317);
 				match(DOT);
 				setState(2319);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14814,6 +14927,7 @@ public class Java8Parser extends Parser {
 				setState(2322);
 				match(LPAREN);
 				setState(2324);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14834,6 +14948,7 @@ public class Java8Parser extends Parser {
 				setState(2329);
 				match(DOT);
 				setState(2331);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14847,6 +14962,7 @@ public class Java8Parser extends Parser {
 				setState(2334);
 				match(LPAREN);
 				setState(2336);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14867,6 +14983,7 @@ public class Java8Parser extends Parser {
 				setState(2341);
 				match(DOT);
 				setState(2343);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14880,6 +14997,7 @@ public class Java8Parser extends Parser {
 				setState(2346);
 				match(LPAREN);
 				setState(2348);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14904,6 +15022,7 @@ public class Java8Parser extends Parser {
 				setState(2354);
 				match(DOT);
 				setState(2356);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -14917,6 +15036,7 @@ public class Java8Parser extends Parser {
 				setState(2359);
 				match(LPAREN);
 				setState(2361);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -14979,6 +15099,7 @@ public class Java8Parser extends Parser {
 			setState(2367);
 			match(DOT);
 			setState(2369);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -14992,6 +15113,7 @@ public class Java8Parser extends Parser {
 			setState(2372);
 			match(LPAREN);
 			setState(2374);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 				{
@@ -15067,6 +15189,7 @@ public class Java8Parser extends Parser {
 				setState(2379);
 				match(LPAREN);
 				setState(2381);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -15087,6 +15210,7 @@ public class Java8Parser extends Parser {
 				setState(2386);
 				match(DOT);
 				setState(2388);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15100,6 +15224,7 @@ public class Java8Parser extends Parser {
 				setState(2391);
 				match(LPAREN);
 				setState(2393);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -15120,6 +15245,7 @@ public class Java8Parser extends Parser {
 				setState(2398);
 				match(DOT);
 				setState(2400);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15133,6 +15259,7 @@ public class Java8Parser extends Parser {
 				setState(2403);
 				match(LPAREN);
 				setState(2405);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -15153,6 +15280,7 @@ public class Java8Parser extends Parser {
 				setState(2410);
 				match(DOT);
 				setState(2412);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15166,6 +15294,7 @@ public class Java8Parser extends Parser {
 				setState(2415);
 				match(LPAREN);
 				setState(2417);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -15190,6 +15319,7 @@ public class Java8Parser extends Parser {
 				setState(2423);
 				match(DOT);
 				setState(2425);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15203,6 +15333,7 @@ public class Java8Parser extends Parser {
 				setState(2428);
 				match(LPAREN);
 				setState(2430);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << NEW) | (1L << SHORT) | (1L << SUPER) | (1L << THIS) | (1L << VOID) | (1L << IntegerLiteral) | (1L << FloatingPointLiteral) | (1L << BooleanLiteral) | (1L << CharacterLiteral) | (1L << StringLiteral) | (1L << NullLiteral) | (1L << LPAREN))) != 0) || ((((_la - 69)) & ~0x3f) == 0 && ((1L << (_la - 69)) & ((1L << (BANG - 69)) | (1L << (TILDE - 69)) | (1L << (INC - 69)) | (1L << (DEC - 69)) | (1L << (ADD - 69)) | (1L << (SUB - 69)) | (1L << (Identifier - 69)) | (1L << (AT - 69)))) != 0)) {
 					{
@@ -15350,6 +15481,7 @@ public class Java8Parser extends Parser {
 				setState(2445);
 				match(COLONCOLON);
 				setState(2447);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15370,6 +15502,7 @@ public class Java8Parser extends Parser {
 				setState(2452);
 				match(COLONCOLON);
 				setState(2454);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15390,6 +15523,7 @@ public class Java8Parser extends Parser {
 				setState(2459);
 				match(COLONCOLON);
 				setState(2461);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15410,6 +15544,7 @@ public class Java8Parser extends Parser {
 				setState(2466);
 				match(COLONCOLON);
 				setState(2468);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15434,6 +15569,7 @@ public class Java8Parser extends Parser {
 				setState(2474);
 				match(COLONCOLON);
 				setState(2476);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15454,6 +15590,7 @@ public class Java8Parser extends Parser {
 				setState(2481);
 				match(COLONCOLON);
 				setState(2483);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15524,6 +15661,7 @@ public class Java8Parser extends Parser {
 			setState(2493);
 			match(COLONCOLON);
 			setState(2495);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LT) {
 				{
@@ -15602,6 +15740,7 @@ public class Java8Parser extends Parser {
 				setState(2500);
 				match(COLONCOLON);
 				setState(2502);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15622,6 +15761,7 @@ public class Java8Parser extends Parser {
 				setState(2507);
 				match(COLONCOLON);
 				setState(2509);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15642,6 +15782,7 @@ public class Java8Parser extends Parser {
 				setState(2514);
 				match(COLONCOLON);
 				setState(2516);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15666,6 +15807,7 @@ public class Java8Parser extends Parser {
 				setState(2522);
 				match(COLONCOLON);
 				setState(2524);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -15686,6 +15828,7 @@ public class Java8Parser extends Parser {
 				setState(2529);
 				match(COLONCOLON);
 				setState(2531);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LT) {
 					{
@@ -16181,6 +16324,7 @@ public class Java8Parser extends Parser {
 				setState(2593);
 				match(LPAREN);
 				setState(2595);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << BYTE) | (1L << CHAR) | (1L << DOUBLE) | (1L << FINAL) | (1L << FLOAT) | (1L << INT) | (1L << LONG) | (1L << SHORT))) != 0) || _la==Identifier || _la==AT) {
 					{
@@ -16310,6 +16454,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 422, RULE_lambdaBody);
 		try {
 			setState(2614);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
 			case BYTE:
@@ -16581,7 +16726,10 @@ public class Java8Parser extends Parser {
 			_la = _input.LA(1);
 			if ( !(((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & ((1L << (ASSIGN - 66)) | (1L << (ADD_ASSIGN - 66)) | (1L << (SUB_ASSIGN - 66)) | (1L << (MUL_ASSIGN - 66)) | (1L << (DIV_ASSIGN - 66)) | (1L << (AND_ASSIGN - 66)) | (1L << (OR_ASSIGN - 66)) | (1L << (XOR_ASSIGN - 66)) | (1L << (MOD_ASSIGN - 66)) | (1L << (LSHIFT_ASSIGN - 66)) | (1L << (RSHIFT_ASSIGN - 66)) | (1L << (URSHIFT_ASSIGN - 66)))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -17696,6 +17844,7 @@ public class Java8Parser extends Parser {
 		enterRule(_localctx, 454, RULE_unaryExpression);
 		try {
 			setState(2791);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INC:
 				enterOuterAlt(_localctx, 1);
@@ -18014,6 +18163,7 @@ public class Java8Parser extends Parser {
 				if ( _alt==1 ) {
 					{
 					setState(2813);
+					_errHandler.sync(this);
 					switch (_input.LA(1)) {
 					case INC:
 						{
