@@ -258,8 +258,10 @@ public class J2SRewriter extends ParseTreeRewriter {
 
     boolean recommendKeepSeparate(int codePointL, int codePointR)
     {
-        boolean idCharL = Character.isJavaIdentifierPart(codePointL);
-        boolean idCharR = Character.isJavaIdentifierPart(codePointR);
+        boolean idCharL = codePointL == '`' || Character.isJavaIdentifierPart(codePointL);
+        boolean idCharR = codePointR == '`' || Character.isJavaIdentifierPart(codePointR);
+        // ...characters may be from an identifier that has already been wrapped in back ticks to resolve a clash with
+        // a swift keyword, hence we also consider back tick to be an identifier character.
         boolean keepSeparate = false;
         if (idCharL && idCharR)
             keepSeparate = true;

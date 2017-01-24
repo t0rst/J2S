@@ -42,35 +42,10 @@ class J2SConverter extends Java8BaseListener {
     private J2SStringMapper types;
     private J2SStringMapper modifiers;
     private J2SStringMapper annotationMapper;
-    private final String[] swiftKeywordList = {
-        "#available", "#else", "#elseif", "#endif", "#if", "#keyPath", "#line", "#selector", "Any", "AnyObject",
-        "OSX", "OSXApplicationExtension", "Protocol", "Type", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__",
-        "arch", "arm", "arm64", "as", "associatedtype", "associativity", "break", "case", "catch", "class",
-        "continue", "convenience", "default", "defer", "deinit", "didSet", "do", "dynamic", "dynamicType", "else",
-        "enum", "extension", "fallthrough", "false", "fileprivate", "final", "for", "func", "get", "guard", "i386",
-        "iOS", "iOSApplicationExtension", "if", "import", "in", "indirect", "infix", "init", "inout", "internal",
-        "is", "lazy", "left", "let", "mutating", "nil", "none", "nonmutating", "macOS", "open", "operator",
-        "optional", "os", "override", "postfix", "precedence", "prefix", "private", "protocol", "public", "repeat",
-        "required", "rethrows", "return", "right", "safe", "self", "set", "static", "struct", "subscript", "super",
-        "swift", "switch", "throw", "throws", "true", "try", "tvOS", "typealias", "unowned", "unowned(safe)",
-        "unowned(unsafe)", "unsafe", "var", "watchOS", "weak", "where", "while", "willSet", "x86_64"
-    };
-    private final String[] javaKeywordList = {
-        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
-        "default", "do", "double", "else", "enum", "extends", "false", "final", "finally", "float", "for", "goto",
-        "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "null", "package",
-        "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized",
-        "this", "throw", "throws", "transient", "true", "try", "void", "volatile", "while"
-    };
-    private final Set<String> identifiersReservedForSwift;
 
     J2SConverter(J2SRewriter rewriter, Map<String, String> options, Map<String, String> moreTypeMappings) {
         this.options = options;
         this.rewriter = rewriter;
-
-        Set<String> keywords = new HashSet<String>(Arrays.asList(swiftKeywordList));
-        keywords.removeAll(Arrays.asList(javaKeywordList));
-        identifiersReservedForSwift = keywords;
 
         modifiers = new J2SStringMapper();
         String protectedMapsTo = option("omitprotected") ? "" : "/*protected*/";
@@ -388,12 +363,9 @@ class J2SConverter extends Java8BaseListener {
         //  case Java8Parser.RSHIFT_ASSIGN:
         //  case Java8Parser.URSHIFT_ASSIGN:
             case Java8Parser.Identifier:
-                String identifier = token.getText();
-                if (identifiersReservedForSwift.contains(identifier))
-                {
-                    identifier = "`" + identifier + "`"; // standard method of resolving keyword clashes in Swift
+                String identifier = J2SGrammarUtils.replacementForIdentifier(node);
+                if (null != identifier)
                     rewriter.replace(node, identifier);
-                }
                 break;
         //  case Java8Parser.AT:
         //  case Java8Parser.ELLIPSIS:
