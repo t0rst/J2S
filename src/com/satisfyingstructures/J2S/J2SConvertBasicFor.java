@@ -46,7 +46,8 @@ public class J2SConvertBasicFor {
     public static void convert ( ParserRuleContext ctx, J2SRewriter rewriter )
     {
         J2SConvertBasicFor converter = new J2SConvertBasicFor(rewriter);
-        if (!converter.convertBasicForStatementToForInLoop(ctx))
+        String couldNotConvertBecause = converter.convertBasicForStatementToForInLoopOrSayWhyNot(ctx);
+        if (null != couldNotConvertBecause)
         {
             // Insert the original as a comment
             TerminalNode tnA = ctx.getToken(Java8Parser.FOR, 0), tnB = ctx.getToken(Java8Parser.RPAREN, 0);
@@ -54,7 +55,8 @@ public class J2SConvertBasicFor {
             {
                 CharStream cs = tnA.getSymbol().getInputStream();
                 String s = cs.getText(Interval.of(tnA.getSymbol().getStartIndex(), tnB.getSymbol().getStopIndex()));
-                rewriter.insertComment("original: " + s, ctx, J2SRewriter.CommentWhere.beforeLineBreak);
+                rewriter.insertComment(s, ctx, J2SRewriter.CommentWhere.beforeLineBreak);
+                rewriter.insertComment("...not converted to a for-in expression because " + couldNotConvertBecause + ".", ctx, J2SRewriter.CommentWhere.beforeLineBreak);
             }
             converter.convertBasicForStatementToWhileLoop(ctx);
         }
@@ -386,11 +388,11 @@ public class J2SConvertBasicFor {
         }
     }
 
-    private boolean convertBasicForStatementToForInLoop( ParserRuleContext ctx )
+    private String convertBasicForStatementToForInLoopOrSayWhyNot(ParserRuleContext ctx )
     {
         int forRule = ctx.getRuleIndex();
         if (forRule != Java8Parser.RULE_basicForStatement && forRule != Java8Parser.RULE_basicForStatementNoShortIf)
-            return false; // not our expected parameter type
+            return "statement kind is not as expected"; // not our expected parameter type
         // Get to know more about our for statement…
         // 'for' '(' forInit? ';' expression? ';' forUpdate? ')' ( statement | statementNoShortIf )
         Boolean noShortIf = forRule == Java8Parser.RULE_basicForStatementNoShortIf;
@@ -435,77 +437,202 @@ public class J2SConvertBasicFor {
                     ii) simple init of a single loop var, or
                     iii) simple declaration of a loop var
         */
-        // 1) must have an update statement
-        if (null == forUpdateCtx) return false;
-        // 1a) must operate on a single variable
-        if (forUpdateCtx.statementExpressionList().getChildCount() != 1) return false;
-        // 1b) must be simple increment or decrement
-        Java8Parser.StatementExpressionContext seCtx = forUpdateCtx.statementExpressionList().statementExpression(0);
-        int step = 0;
-        int updateStatementRule = seCtx.getRuleIndex();
-        switch (updateStatementRule) {
-            case Java8Parser.RULE_preIncrementExpression:
-            case Java8Parser.RULE_postDecrementExpression: step = -1; break;
-            case Java8Parser.RULE_preDecrementExpression:
-            case Java8Parser.RULE_postIncrementExpression: step = 1; break;
+        // 1) Update statement. We need one...
+        if (null == forUpdateCtx)
+            return "it lacks an update statement";
+        // 1a) and it must operate on a single variable
+        if (forUpdateCtx.statementExpressionList().getChildCount() != 1)
+            return "there is more than one expression in the update statement";
+        // 1b) and it must be a simple increment or decrement
+        Java8Parser.StatementExpressionContext updateStatementExpressionCtx =
+            forUpdateCtx.statementExpressionList().statementExpression(0);
+        //  statementExpression : assignment | preIncrementExpression | preDecrementExpression
+        //                                   | postIncrementExpression | postDecrementExpression
+        //                                   | methodInvocation | classInstanceCreationExpression
+        ParserRuleContext updateExpressionCtx = updateStatementExpressionCtx.getChild(ParserRuleContext.class, 0);
+        int updateExpressionRule = updateExpressionCtx.getRuleIndex();
+        boolean ascending_sequence;
+        boolean open_interval;
+        ParserRuleContext stepExpressionCtx = null;
+        switch (updateExpressionRule) {
+
+            // unaryExpression : preIncrementExpression | preDecrementExpression
+            //                 | '+' unaryExpression | '-' unaryExpression
+            //                 | unaryExpressionNotPlusMinus
+            // preDecrementExpression : '--' unaryExpression
+            // preIncrementExpression : '++' unaryExpression
+            case Java8Parser.RULE_preDecrementExpression:   ascending_sequence = false;     break;
+            case Java8Parser.RULE_preIncrementExpression:   ascending_sequence = true;      break;
+
+            // postfixExpression : ( primary | expressionName ) ( '++' | '--')*
+            // postIncrementExpression : postfixExpression '++'
+            // postDecrementExpression : postfixExpression '--'
+            case Java8Parser.RULE_postDecrementExpression:  ascending_sequence = false;     break;
+            case Java8Parser.RULE_postIncrementExpression:  ascending_sequence = true;      break;
+
+            // assignment : leftHandSide assignmentOperator expression
+            // leftHandSide : expressionName | fieldAccess | arrayAccess
             case Java8Parser.RULE_assignment:
-                if (null != seCtx.assignment().leftHandSide().arrayAccess())
-                    return false;
+                if (null != updateStatementExpressionCtx.assignment().leftHandSide().arrayAccess())
+                    return "cant convert a loop variable that is an array element";
+                TerminalNode node = updateStatementExpressionCtx.assignment().assignmentOperator().getChild(TerminalNode.class, 0);
+                switch (node.getSymbol().getType())
+                {
+                    case Java8Parser.ADD_ASSIGN:    ascending_sequence = true;      break;
+                    case Java8Parser.SUB_ASSIGN:    ascending_sequence = false;     break;
+                    case Java8Parser.ASSIGN:        // possibilities too complex to warrant extracting simple a=a+1 cases
+                    default:                        return "potentially too complex to create a sequence from this update operation";
+                }
+                stepExpressionCtx = updateStatementExpressionCtx.assignment().expression();
                 break;
+            default: // methodInvocation | classInstanceCreationExpression
+                return "the expression in the update statement is too complex";
+        }
+        // In each of the cases that we have not rejected, the loop variable is in the first child rule context of the
+        // update statement. Get the text of the variable, rather than analysing the graph any further, as the
+        // possibilities are endless; all that we require is that the loop variable text matches that in the text
+        // expression and the init expression.
+        ParserRuleContext loopVariable_updated_Ctx = updateExpressionCtx.getChild(ParserRuleContext.class, 0);
+        String loopVariableTxt = loopVariable_updated_Ctx.getText(); // we want original text
+
+        // 2) Expression
+        if (null == expressionCtx)
+            return "it lacks a test expression";
+        // expression : lambdaExpression | assignmentExpression
+        if (null != expressionCtx.lambdaExpression())
+            return "cannot convert a lambda expression";
+        // assignmentExpression : conditionalExpression | assignment
+        if (null != expressionCtx.assignmentExpression().assignment())
+            return "cannot convert an assignment within the test expression";
+        // 2a) must be a simple relation:
+        // Descend the chain of expression rule pass-through branches until we find the one that is significant, then
+        // test to see if expression contains a terminal that is one of !=, <, <=, >, >=.
+        ParserRuleContext testExpressionCtx = J2SGrammarUtils.descendToSignificantExpression(expressionCtx);
+        int testExpressionRule = testExpressionCtx.getRuleIndex();
+        TerminalNode node = testExpressionCtx.getChild(TerminalNode.class, 0);
+        int testOperatorType = null != node ? node.getSymbol().getType() : 0;
+        switch (testOperatorType)
+        {
+            case Java8Parser.NOTEQUAL:  open_interval = true;   break;
+            case Java8Parser.LE:        open_interval = false;  break;
+            case Java8Parser.GE:        open_interval = false;  break;
+
+            case Java8Parser.LT: // can occur in relational and shift expressions
+            case Java8Parser.GT: // can occur in relational and shift expressions
+                if (testExpressionRule == Java8Parser.RULE_relationalExpression)
+                {
+                    open_interval = true;
+                    break;
+                }
             default:
-                return false;
+                return "can only convert test expressions that use !=, <, <=, > or >=";
         }
-        ParserRuleContext updateVarCtx = seCtx.getChild(ParserRuleContext.class, 0);
-        String updateVarTxt = updateVarCtx.getText(); // we want original text
-
-        // 2)
-        if (null == expressionCtx) return false;
-        if (null != expressionCtx.lambdaExpression() || null != expressionCtx.assignmentExpression().assignment()) return false;
-        Java8Parser.ConditionalExpressionContext cxCtx = expressionCtx.assignmentExpression().conditionalExpression();
-        // 2a) simple relation
-        ParserRuleContext significantExprCtx = J2SGrammarUtils.descendToSignificantExpression(cxCtx);
-        int sigExprRule = significantExprCtx.getRuleIndex();
-        TerminalNode tn = significantExprCtx.getChild(TerminalNode.class, 0);
-        int tokenType = null != tn ? tn.getSymbol().getType() : 0;
-        if (sigExprRule == Java8Parser.RULE_equalityExpression && tokenType != Java8Parser.NOTEQUAL) return false;
-        if (sigExprRule == Java8Parser.RULE_relationalExpression && tokenType == Java8Parser.INSTANCEOF) return false;
         // 2b) relation must be testing same var as changed in update expression
-        int varIndex = -1;
-        if (!updateVarTxt.equals(significantExprCtx.getChild(++varIndex).getText()))
-            if (!updateVarTxt.equals(significantExprCtx.getChild(++varIndex).getText()))
-                return false; // no match
-        // 2c) other side should not mutate within the loop
-        // - we can't tell this, too difficult
-
-        // 3)
-        if (null == forInitCtx)
+        // The loop variable could be on the left or the right of the comparison operator
+        int i;
+        ParserRuleContext loopVariable_tested_Ctx = null;
+        for (i = 0; i < 2; i++)
         {
-            // ok, using loop var from outside scope
+            loopVariable_tested_Ctx = testExpressionCtx.getChild(ParserRuleContext.class, i);
+            if (null != loopVariable_tested_Ctx
+             && loopVariableTxt.equals(loopVariable_tested_Ctx.getText()))
+                break; // found matching loop variable
+            loopVariable_tested_Ctx = null;
+        }
+        if (null == loopVariable_tested_Ctx || (i == 1 && testExpressionCtx.getChildCount() > 3))
+            return "the test expression must be testing the same variable as changed in update expression";
+        ParserRuleContext terminalValueCtx = testExpressionCtx.getChild(ParserRuleContext.class, i^1);
+        // 2c) the terminal value side should not mutate within the loop
+        // - way too difficult for us to determine this
+
+        // 3) Loop init expression. Must be either...
+        ParserRuleContext initialValueCtx;
+        if (null == forInitCtx) // a) empty
+        {
+            // Using the loop variable's existing value from outside the scope
+            initialValueCtx = loopVariable_tested_Ctx;
         }
         else
-        if (forInitCtx.getRuleIndex() == Java8Parser.RULE_statementExpressionList)
+        if (null != forInitCtx.statementExpressionList()) // b) a simple init of a single loop var
         {
+/*
+        // Could not convert...
+        // for (i = 0; i<10; i++)
+        // ...to a for..in statement because can only work with an assignment expression for loop variable initialisation.
+        i = 0; while i<10  {j += 1 i += 1; }
+*/
             if (forInitCtx.statementExpressionList().getChildCount() != 1)
-                return false;
-            Java8Parser.StatementExpressionContext forInitStatementCtx = forInitCtx.statementExpressionList().statementExpression(0);
-            if (forInitStatementCtx.getRuleIndex() != Java8Parser.RULE_assignment)
-                return false;
-            if (!updateVarTxt.equals(forInitStatementCtx.getChild(0).getText()))
-                return false; // different to the loop variable
+                return "can only work with initialisation of a single loop variable";
+            Java8Parser.StatementExpressionContext initExpressionCtx =
+                forInitCtx.statementExpressionList().statementExpression(0);
+            if (null == initExpressionCtx.assignment())
+                return "can only work with an assignment expression for loop variable initialisation";
+            if (!loopVariableTxt.equals(initExpressionCtx.assignment().leftHandSide().getText()))
+                return "the initialised variable is different from the updated variable"; // different to the loop variable
+            initialValueCtx = initExpressionCtx.assignment().expression();
         }
         else
-        if (forInitCtx.getRuleIndex() == Java8Parser.RULE_localVariableDeclaration)
+        if (null != forInitCtx.localVariableDeclaration()) // c) a simple decl of a single loop var
         {
+            // localVariableDeclaration : variableModifier* unannType variableDeclaratorList
             Java8Parser.VariableDeclaratorListContext vdlc = forInitCtx.localVariableDeclaration().variableDeclaratorList();
+            // variableDeclaratorList : variableDeclarator (',' variableDeclarator)*
             if (vdlc.getChildCount() != 1)
-                return false; // we can only cope with a single variable declaration
+                return "can only work with declaration of a single loop variable";
             Java8Parser.VariableDeclaratorContext vdc = vdlc.variableDeclarator(0);
-            if (!updateVarTxt.equals(vdc.getChild(0).getText()))
-                return false; // different to the loop variable
+            // variableDeclarator : variableDeclaratorId ('=' variableInitializer)?
+            if (!loopVariableTxt.equals(vdc.getChild(0).getText()))
+                return "the declared loop variable is be different from the updated variable";
+            initialValueCtx = vdc.variableInitializer();
+            if (null == initialValueCtx)
+                return "there is no initialiser for the loop variable";
+        }
+        else
+            return "loop initialisation is in unexpected form";
+
+        // Now we have all the components we need
+        String forInLoopText;
+        // Use actual text with replacements
+        String initialValueTxt = rewriter.getText(initialValueCtx);
+        String terminalValueTxt = rewriter.getText(terminalValueCtx);
+        // !!!: watch out...
+        // if we use the actual text from the update expression, we can find that the pre/post-inc/dec has been
+        // converted to the add/sub-assign form and because structure is lost when rewriting, the new form can
+        // stick to the variable when we retrieve it. There's no easy solution for this (and any similar occurrences),
+        // but we side step it by getting the text of loop variable from the test expression:
+        loopVariableTxt = rewriter.getText(loopVariable_tested_Ctx);
+        if (null != stepExpressionCtx || !ascending_sequence)
+        {
+            String stepExpressionText = stepExpressionCtx == null ? "-1" : ascending_sequence ? rewriter.getText(stepExpressionCtx) : "-(" + rewriter.getText(stepExpressionCtx) + ")";
+            forInLoopText = "for " + loopVariableTxt + " in " + loopVariableTxt + ".stride(from: " + initialValueTxt + (open_interval ? ", to: " : ", through: ") + terminalValueTxt + ", by: " + stepExpressionText + ")";
+        }
+        else
+        {
+            forInLoopText = "for " + loopVariableTxt + " in " + initialValueTxt + (open_interval ? " ..< " : " ... ") + terminalValueTxt;
         }
 
-        // Time vampire of complexity --- leave for now.
+        Token startToken = ctx.getToken(Java8Parser.FOR, 0).getSymbol();
+        Token endToken = ctx.getToken(Java8Parser.RPAREN, 0).getSymbol();
 
-        return false;
+        CharStream cs = startToken.getInputStream();
+        String originalExpressionTxt = cs.getText(Interval.of(startToken.getStartIndex(), endToken.getStopIndex()));
+        rewriter.insertComment(originalExpressionTxt + " …converted to…", ctx, J2SRewriter.CommentWhere.beforeLineBreak);
+
+        int startIndex = startToken.getTokenIndex();
+        int endIndex = endToken.getTokenIndex();
+
+        // Problem: (see notes in J2SRewriter.replaceAndAdjustWhitespace) Before converting to for-in, the loop will
+        // also have had parentheses removed (and other transforms); rewriter may have coallesced some of the changes
+        // so that the old end boundary no longer exists. (- a shortcoming of TokenStreamRewriter)
+        // Workaround: test if endIndex is straddled by changed interval, and if so, extend our interval to the end of
+        // the change. (Pretty horrendous to have to work around this here, but I don't yet see an easy way of fixing
+        // the underlying problem or a generalised way of working around it.)
+        Interval interval = rewriter.getChangedIntervalContaining(endIndex, endIndex);
+        if (null != interval && interval.a <= endIndex && interval.b > endIndex)
+            endIndex = interval.b;
+
+        rewriter.replaceAndAdjustWhitespace(startIndex, endIndex, forInLoopText);
+
+        return null;
     }
 }

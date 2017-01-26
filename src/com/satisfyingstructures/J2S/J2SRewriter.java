@@ -315,6 +315,16 @@ public class J2SRewriter extends ParseTreeRewriter {
         // through adjacent text, if a token is in a changed interval, get the whole changed text, otherwise get the
         // token text.
 
+        // Gotcha: adding separation whitespace is ok, but removing excess separation can be problematic: on a later
+        // call to getText(), the rewriter can consolidate accumulated rewrite operations, such that a reduction of the
+        // trailing WS token gets merged with whatever transformed text there is for the preceding token, i.e. combined
+        // replacement text for a widened range of tokens, extending beyond the original range of significant (i.e.
+        // non-white) tokens; if there is a further transformation on the significant range of tokens, a
+        // replacement will be requested up to the end of the last significant token, but this now falls in the
+        // middle of the consolidated replacement op, hence TokenStreamRewriter considers it an overlapping replacement
+        // request and throws an exception. !!! What a pain. The ideal time for adjusting whitespace would be in an
+        // extra pass at the end — if we still had lexical information about our replacements; but we do not. :-(
+
         String textL, textR;
         Interval interval;
         int i, tokenIdxL, tokenIdxR, lenL, lenR, wsL, wsR, wsWanted;
